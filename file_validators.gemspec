@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.authors     = ['Ahmad Musaffa']
   s.email       = ['musaffa_csemm@yahoo.com']
   s.summary     = 'ActiveModel file validators'
-  s.description = 'Adds file validators for ActiveModel'
+  s.description = 'Adds file validators to ActiveModel'
   s.homepage    = 'https://github.com/musaffa/file_validators'
   s.license     = 'MIT'
 
