@@ -3,6 +3,6 @@
 source "https://rubygems.org"
 
 gem "appraisal"
-gem "rails", "3.0.20"
+gem "activemodel", "3.0.20"
 
 gemspec :path => "../"
