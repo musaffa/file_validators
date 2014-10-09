@@ -75,10 +75,10 @@ describe ActiveModel::Validations::FileSizeValidator do
                              message: 'is invalid. (Between %{min} and %{max} please.)' }
 
     it { is_expected.not_to allow_file_size(11.kilobytes, @validator,
-                                            message: "is invalid. (Between #{@storage_units[5120]} and #{@storage_units[10240]} please.)") }
+                                            message: "Avatar is invalid. (Between #{@storage_units[5120]} and #{@storage_units[10240]} please.)") }
 
     it { is_expected.to allow_file_size(7.kilobytes, @validator,
-                                        message: "is invalid. (Between #{@storage_units[5120]} and #{@storage_units[10240]} please.)") }
+                                        message: "Avatar is invalid. (Between #{@storage_units[5120]} and #{@storage_units[10240]} please.)") }
   end
 
 

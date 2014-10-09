@@ -5,7 +5,7 @@ RSpec::Matchers.define :allow_file_content_type do |content_type, validator, mes
     dummy = model.new
     validator.validate(dummy)
     if message.present?
-      dummy.errors[validator.attributes[0]].exclude?(message[:message])
+      dummy.errors.full_messages.exclude?(message[:message])
     else
       dummy.errors.empty?
     end

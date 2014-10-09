@@ -5,7 +5,7 @@ RSpec::Matchers.define :allow_file_size do |size, validator, message|
     dummy = model.new
     validator.validate(dummy)
     if message.present?
-      dummy.errors[validator.attributes[0]].exclude?(message[:message])
+      dummy.errors.full_messages.exclude?(message[:message])
     else
       dummy.errors.empty?
     end

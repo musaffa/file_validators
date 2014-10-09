@@ -44,15 +44,15 @@ describe ActiveModel::Validations::FileContentTypeValidator do
       context 'with :message option' do
         context 'without interpolation' do
           before { build_validator in: 'image/png', message: 'should be a PNG image' }
-          it { is_expected.not_to allow_file_content_type('image/jpeg', @validator, message: 'should be a PNG image') }
+          it { is_expected.not_to allow_file_content_type('image/jpeg', @validator, message: 'Avatar should be a PNG image') }
         end
   
         context 'with interpolation' do
           before { build_validator in: 'image/png', message: 'should have content type %{types}' }
           it { is_expected.not_to allow_file_content_type('image/jpeg', @validator,
-                                                          message: 'should have content type image/png') }
+                                                          message: 'Avatar should have content type image/png') }
           it { is_expected.to allow_file_content_type('image/png', @validator,
-                                                          message: 'should have content type image/png') }
+                                                          message: 'Avatar should have content type image/png') }
         end
       end
     end
@@ -90,15 +90,15 @@ describe ActiveModel::Validations::FileContentTypeValidator do
       context 'with :message option' do
         context 'without interpolation' do
           before { build_validator exclude: 'image/png', message: 'should not be a PNG image' }
-          it { is_expected.not_to allow_file_content_type('image/png', @validator, message: 'should not be a PNG image') }
+          it { is_expected.not_to allow_file_content_type('image/png', @validator, message: 'Avatar should not be a PNG image') }
         end
   
         context 'with interpolation' do
           before { build_validator exclude: 'image/png', message: 'should not have content type %{types}' }
           it { is_expected.not_to allow_file_content_type('image/png', @validator,
-                                                          message: 'should not have content type image/png') }
+                                                          message: 'Avatar should not have content type image/png') }
           it { is_expected.to allow_file_content_type('image/jpeg', @validator,
-                                                      message: 'should not have content type image/jpeg') }
+                                                      message: 'Avatar should not have content type image/jpeg') }
         end
       end
     end
