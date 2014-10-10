@@ -15,40 +15,40 @@ describe ActiveModel::Validations::FileContentTypeValidator do
   context 'whitelist format' do
     context 'with an allowed type' do
       context 'as a string' do
-        before { build_validator in: 'image/jpg' }
+        before { build_validator allow: 'image/jpg' }
         it { is_expected.to allow_file_content_type('image/jpg', @validator) }
       end
   
       context 'as an regexp' do
-        before { build_validator in: /^image\/.*/ }
+        before { build_validator allow: /^image\/.*/ }
         it { is_expected.to allow_file_content_type('image/png', @validator) }
       end
   
       context 'as a list' do
-        before { build_validator in: ['image/png', 'image/jpg', 'image/jpeg'] }
+        before { build_validator allow: ['image/png', 'image/jpg', 'image/jpeg'] }
         it { is_expected.to allow_file_content_type('image/png', @validator) }
       end
     end
   
     context 'with a disallowed type' do
       context 'as a string' do
-        before { build_validator in: 'image/png' }
+        before { build_validator allow: 'image/png' }
         it { is_expected.not_to allow_file_content_type('image/jpeg', @validator) }
       end
   
       context 'as a regexp' do
-        before { build_validator in: /^text\/.*/ }
+        before { build_validator allow: /^text\/.*/ }
         it { is_expected.not_to allow_file_content_type('image/png', @validator) }
       end
   
       context 'with :message option' do
         context 'without interpolation' do
-          before { build_validator in: 'image/png', message: 'should be a PNG image' }
+          before { build_validator allow: 'image/png', message: 'should be a PNG image' }
           it { is_expected.not_to allow_file_content_type('image/jpeg', @validator, message: 'Avatar should be a PNG image') }
         end
   
         context 'with interpolation' do
-          before { build_validator in: 'image/png', message: 'should have content type %{types}' }
+          before { build_validator allow: 'image/png', message: 'should have content type %{types}' }
           it { is_expected.not_to allow_file_content_type('image/jpeg', @validator,
                                                           message: 'Avatar should have content type image/png') }
           it { is_expected.to allow_file_content_type('image/png', @validator,
@@ -105,7 +105,7 @@ describe ActiveModel::Validations::FileContentTypeValidator do
   end
 
   context 'using the helper' do
-    before { Dummy.validates_file_content_type :avatar, in: 'image/jpg' }
+    before { Dummy.validates_file_content_type :avatar, allow: 'image/jpg' }
 
     it 'adds the validator to the class' do
       expect(Dummy.validators_on(:avatar)).to include(ActiveModel::Validations::FileContentTypeValidator)
@@ -118,7 +118,7 @@ describe ActiveModel::Validations::FileContentTypeValidator do
     end
 
     it 'does not raise argument error if :in was given' do
-      expect { build_validator in: 'image/jpg' }.not_to raise_error
+      expect { build_validator allow: 'image/jpg' }.not_to raise_error
     end
 
     it 'does not raise argument error if :exclude was given' do

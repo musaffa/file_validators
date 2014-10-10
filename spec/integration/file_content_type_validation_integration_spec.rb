@@ -14,12 +14,12 @@ describe 'File Content Type integration with ActiveModel' do
     @sample_text_path = File.join(File.dirname(__FILE__), '../fixtures/sample.txt')
   end
 
-  context ':in option' do
+  context ':allow option' do
     context 'a string' do
       before :all do
         Person.class_eval do
           Person.reset_callbacks(:validate)
-          validates :avatar, file_content_type: { in: 'image/jpeg' }
+          validates :avatar, file_content_type: { allow: 'image/jpeg' }
         end
       end
 
@@ -40,7 +40,7 @@ describe 'File Content Type integration with ActiveModel' do
       before :all do
         Person.class_eval do
           Person.reset_callbacks(:validate)
-          validates :avatar, file_content_type: { in: /^image\/.*/ }
+          validates :avatar, file_content_type: { allow: /^image\/.*/ }
         end
       end
 
@@ -68,7 +68,7 @@ describe 'File Content Type integration with ActiveModel' do
       before :all do
         Person.class_eval do
           Person.reset_callbacks(:validate)
-          validates :avatar, file_content_type: { in: ['image/jpeg', 'text/plain'] }
+          validates :avatar, file_content_type: { allow: ['image/jpeg', 'text/plain'] }
         end
       end
 
@@ -172,11 +172,11 @@ describe 'File Content Type integration with ActiveModel' do
     end
   end
 
-  context ':in and :exclude combined' do
+  context ':allow and :exclude combined' do
     before :all do
       Person.class_eval do
         Person.reset_callbacks(:validate)
-        validates :avatar, file_content_type: { in: /^image\/.*/, exclude: 'image/png' }
+        validates :avatar, file_content_type: { allow: /^image\/.*/, exclude: 'image/png' }
       end
     end
 

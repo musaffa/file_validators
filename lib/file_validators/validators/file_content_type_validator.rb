@@ -35,7 +35,7 @@ module ActiveModel
       end
 
       def allowed_types
-        [options[:in]].flatten.compact
+        [options[:allow]].flatten.compact
       end
 
       def forbidden_types
@@ -43,8 +43,8 @@ module ActiveModel
       end
 
       def check_validity!
-        unless options.has_key?(:in) || options.has_key?(:exclude)
-          raise ArgumentError, 'You must pass in either :in or :exclude to the validator'
+        unless options.has_key?(:allow) || options.has_key?(:exclude)
+          raise ArgumentError, 'You must pass in either :allow or :exclude to the validator'
         end
       end
     end
@@ -52,7 +52,7 @@ module ActiveModel
     module HelperMethods
       # Places ActiveModel validations on the content type of the file
       # assigned. The possible options are:
-      # * +in+: Allowed content types.  Can be a single content type
+      # * +allow+: Allowed content types.  Can be a single content type
       #   or an array.  Each type can be a String or a Regexp. It should be
       #   noted that Internet Explorer uploads files with content_types that you
       #   may not expect. For example, JPEG images are given image/pjpeg and

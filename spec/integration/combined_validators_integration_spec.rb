@@ -19,7 +19,7 @@ describe 'Combined File Validators integration with ActiveModel' do
       Person.class_eval do
         Person.reset_callbacks(:validate)
         validates :avatar, file_size: { less_than: 20.kilobytes },
-                           file_content_type: { in: 'image/jpeg' }
+                           file_content_type: { allow: 'image/jpeg' }
       end
     end
 
@@ -31,6 +31,11 @@ describe 'Combined File Validators integration with ActiveModel' do
     end
 
     context 'with a disallowed type' do
+      it 'invalidates jpeg image file having size bigger than the allowed size' do
+        subject.avatar = Rack::Test::UploadedFile.new(@chubby_bubble_path, 'image/jpeg')
+        expect(subject).not_to be_valid
+      end
+
       it 'invalidates png image file' do
         subject.avatar = Rack::Test::UploadedFile.new(@chubby_cute_path, 'image/png')
         expect(subject).not_to be_valid
@@ -48,7 +53,7 @@ describe 'Combined File Validators integration with ActiveModel' do
       Person.class_eval do
         Person.reset_callbacks(:validate)
         validates_file_size :avatar, { less_than: 20.kilobytes }
-        validates_file_content_type :avatar, in: 'image/jpeg'
+        validates_file_content_type :avatar, allow: 'image/jpeg'
       end
     end
 
@@ -60,6 +65,11 @@ describe 'Combined File Validators integration with ActiveModel' do
     end
 
     context 'with a disallowed type' do
+      it 'invalidates jpeg image file having size bigger than the allowed size' do
+        subject.avatar = Rack::Test::UploadedFile.new(@chubby_bubble_path, 'image/jpeg')
+        expect(subject).not_to be_valid
+      end
+
       it 'invalidates png image file' do
         subject.avatar = Rack::Test::UploadedFile.new(@chubby_cute_path, 'image/png')
         expect(subject).not_to be_valid
