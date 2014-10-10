@@ -16,6 +16,8 @@ module ActiveModel
       def validate_each(record, attribute, value)
         unless value.blank?
           options.slice(*AVAILABLE_CHECKS).each do |option, option_value|
+            option_value = option_value.call(record) if option_value.is_a?(Proc)
+            option_value = extract_option_value(option, option_value)
             unless value.size.send(CHECKS[option], option_value)
               error_message_key = options[:in] ? :in : option
               record.errors.add(attribute,
@@ -36,15 +38,31 @@ module ActiveModel
 
       def extract_options(options)
         if range = options[:in]
-          raise ArgumentError, ':in must be a Range' unless range.is_a?(Range)
           clear_options(options)
-          options[:less_than_or_equal_to], options[:greater_than_or_equal_to] = range.max, range.min
+
+          case range
+            when Range
+              options[:less_than_or_equal_to], options[:greater_than_or_equal_to] = range.max, range.min
+            when Proc
+              options[:less_than_or_equal_to] = range
+              options[:greater_than_or_equal_to] = range
+          else
+            raise ArgumentError, ':in must be a Range or a Proc'
+          end
         end
       end
 
       def clear_options(options)
         AVAILABLE_CHECKS.each do |option|
           options.delete(option)
+        end
+      end
+
+      def extract_option_value(option, option_value)
+        if option_value.is_a?(Range)
+          option == :less_than_or_equal_to ? option_value.max : option_value.min
+        else
+          option_value
         end
       end
 

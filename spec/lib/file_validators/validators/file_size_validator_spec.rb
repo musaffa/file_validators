@@ -25,49 +25,108 @@ describe ActiveModel::Validations::FileSizeValidator do
   end
 
   context 'with :in option' do
-    before { build_validator in: (5.kilobytes..10.kilobytes) }
+    context 'as a range' do
+      before { build_validator in: (5.kilobytes..10.kilobytes) }
 
-    it { is_expected.to allow_file_size(7.kilobytes, @validator) }
-    it { is_expected.not_to allow_file_size(4.kilobytes, @validator) }
-    it { is_expected.not_to allow_file_size(11.kilobytes, @validator) }
+      it { is_expected.to allow_file_size(7.kilobytes, @validator) }
+      it { is_expected.not_to allow_file_size(4.kilobytes, @validator) }
+      it { is_expected.not_to allow_file_size(11.kilobytes, @validator) }
+    end
+
+    context 'as a proc' do
+      before { build_validator in: lambda { |record| (5.kilobytes..10.kilobytes) } }
+
+      it { is_expected.to allow_file_size(7.kilobytes, @validator) }
+      it { is_expected.not_to allow_file_size(4.kilobytes, @validator) }
+      it { is_expected.not_to allow_file_size(11.kilobytes, @validator) }
+    end
   end
 
   context 'with :greater_than_or_equal_to option' do
-    before { build_validator greater_than_or_equal_to: 10.kilobytes }
+    context 'as a number' do
+      before { build_validator greater_than_or_equal_to: 10.kilobytes }
 
-    it { is_expected.to allow_file_size(11.kilobytes, @validator) }
-    it { is_expected.to allow_file_size(10.kilobytes, @validator) }
-    it { is_expected.not_to allow_file_size(9.kilobytes, @validator) }
+      it { is_expected.to allow_file_size(11.kilobytes, @validator) }
+      it { is_expected.to allow_file_size(10.kilobytes, @validator) }
+      it { is_expected.not_to allow_file_size(9.kilobytes, @validator) }
+    end
+
+    context 'as a proc' do
+      before { build_validator greater_than_or_equal_to: lambda { |record| 10.kilobytes } }
+
+      it { is_expected.to allow_file_size(11.kilobytes, @validator) }
+      it { is_expected.to allow_file_size(10.kilobytes, @validator) }
+      it { is_expected.not_to allow_file_size(9.kilobytes, @validator) }
+    end
   end
 
   context 'with :less_than_or_equal_to option' do
-    before { build_validator less_than_or_equal_to: 10.kilobytes }
+    context 'as a number' do
+      before { build_validator less_than_or_equal_to: 10.kilobytes }
 
-    it { is_expected.to allow_file_size(9.kilobytes, @validator) }
-    it { is_expected.to allow_file_size(10.kilobytes, @validator) }
-    it { is_expected.not_to allow_file_size(11.kilobytes, @validator) }
+      it { is_expected.to allow_file_size(9.kilobytes, @validator) }
+      it { is_expected.to allow_file_size(10.kilobytes, @validator) }
+      it { is_expected.not_to allow_file_size(11.kilobytes, @validator) }
+    end
+
+    context 'as a proc' do
+      before { build_validator less_than_or_equal_to: lambda { |record| 10.kilobytes } }
+
+      it { is_expected.to allow_file_size(9.kilobytes, @validator) }
+      it { is_expected.to allow_file_size(10.kilobytes, @validator) }
+      it { is_expected.not_to allow_file_size(11.kilobytes, @validator) }
+    end
   end
 
   context 'with :greater_than option' do
-    before { build_validator greater_than: 10.kilobytes }
+    context 'as a number' do
+      before { build_validator greater_than: 10.kilobytes }
 
-    it { is_expected.to allow_file_size(11.kilobytes, @validator) }
-    it { is_expected.not_to allow_file_size(10.kilobytes, @validator) }
+      it { is_expected.to allow_file_size(11.kilobytes, @validator) }
+      it { is_expected.not_to allow_file_size(10.kilobytes, @validator) }
+    end
+
+    context 'as a proc' do
+      before { build_validator greater_than: lambda { |record| 10.kilobytes } }
+
+      it { is_expected.to allow_file_size(11.kilobytes, @validator) }
+      it { is_expected.not_to allow_file_size(10.kilobytes, @validator) }
+    end
   end
 
   context 'with :less_than option' do
-    before { build_validator less_than: 10.kilobytes }
+    context 'as a number' do
+      before { build_validator less_than: 10.kilobytes }
 
-    it { is_expected.to allow_file_size(9.kilobytes, @validator) }
-    it { is_expected.not_to allow_file_size(10.kilobytes, @validator) }
+      it { is_expected.to allow_file_size(9.kilobytes, @validator) }
+      it { is_expected.not_to allow_file_size(10.kilobytes, @validator) }
+    end
+
+    context 'as a proc' do
+      before { build_validator less_than: lambda { |record| 10.kilobytes } }
+
+      it { is_expected.to allow_file_size(9.kilobytes, @validator) }
+      it { is_expected.not_to allow_file_size(10.kilobytes, @validator) }
+    end
   end
 
   context 'with :greater_than and :less_than option' do
-    before { build_validator greater_than: 5.kilobytes, less_than: 10.kilobytes }
+    context 'as a number' do
+      before { build_validator greater_than: 5.kilobytes, less_than: 10.kilobytes }
 
-    it { is_expected.to allow_file_size(7.kilobytes, @validator) }
-    it { is_expected.not_to allow_file_size(5.kilobytes, @validator) }
-    it { is_expected.not_to allow_file_size(10.kilobytes, @validator) }
+      it { is_expected.to allow_file_size(7.kilobytes, @validator) }
+      it { is_expected.not_to allow_file_size(5.kilobytes, @validator) }
+      it { is_expected.not_to allow_file_size(10.kilobytes, @validator) }
+    end
+
+    context 'as a proc' do
+      before { build_validator greater_than: lambda { |record| 5.kilobytes },
+                                  less_than: lambda { |record| 10.kilobytes } }
+
+      it { is_expected.to allow_file_size(7.kilobytes, @validator) }
+      it { is_expected.not_to allow_file_size(5.kilobytes, @validator) }
+      it { is_expected.not_to allow_file_size(10.kilobytes, @validator) }
+    end
   end
 
   context 'with :message option' do

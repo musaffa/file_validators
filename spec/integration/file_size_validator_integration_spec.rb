@@ -14,55 +14,112 @@ describe 'File Size Validator integration with ActiveModel' do
   end
 
   context ':in option' do
-    before :all do
-      Person.class_eval do
-        Person.reset_callbacks(:validate)
-        validates :avatar, file_size: { in: 20.kilobytes..40.kilobytes }
+    context 'as a range' do
+      before :all do
+        Person.class_eval do
+          Person.reset_callbacks(:validate)
+          validates :avatar, file_size: { in: 20.kilobytes..40.kilobytes }
+        end
+      end
+
+      subject { Person.new }
+
+      context 'when file size is out of range' do
+        before { subject.avatar = Rack::Test::UploadedFile.new(@cute_path) }
+        it { is_expected.not_to be_valid }
+      end
+
+      context 'when file size is out of range' do
+        before { subject.avatar = Rack::Test::UploadedFile.new(@chubby_cute_path) }
+        it { is_expected.not_to be_valid }
+      end
+
+      context 'when file size within range' do
+        before { subject.avatar = Rack::Test::UploadedFile.new(@chubby_bubble_path) }
+        it { is_expected.to be_valid }
       end
     end
 
-    subject { Person.new }
+    context 'as a proc' do
+      before :all do
+        Person.class_eval do
+          Person.reset_callbacks(:validate)
+          validates :avatar, file_size: { in: lambda { |record| 20.kilobytes..40.kilobytes } }
+        end
+      end
 
-    context 'when file size is out of range' do
-      before { subject.avatar = Rack::Test::UploadedFile.new(@cute_path) }
-      it { is_expected.not_to be_valid }
-    end
+      subject { Person.new }
 
-    context 'when file size is out of range' do
-      before { subject.avatar = Rack::Test::UploadedFile.new(@chubby_cute_path) }
-      it { is_expected.not_to be_valid }
-    end
+      context 'when file size is out of range' do
+        before { subject.avatar = Rack::Test::UploadedFile.new(@cute_path) }
+        it { is_expected.not_to be_valid }
+      end
 
-    context 'when file size within range' do
-      before { subject.avatar = Rack::Test::UploadedFile.new(@chubby_bubble_path) }
-      it { is_expected.to be_valid }
+      context 'when file size is out of range' do
+        before { subject.avatar = Rack::Test::UploadedFile.new(@chubby_cute_path) }
+        it { is_expected.not_to be_valid }
+      end
+
+      context 'when file size within range' do
+        before { subject.avatar = Rack::Test::UploadedFile.new(@chubby_bubble_path) }
+        it { is_expected.to be_valid }
+      end
     end
   end
 
   context ':greater_than and :less_than option' do
-    before :all do
-      Person.class_eval do
-        Person.reset_callbacks(:validate)
-        validates :avatar, file_size: { greater_than: 20.kilobytes,
-                                        less_than:    40.kilobytes }
+    context 'as numbers' do
+      before :all do
+        Person.class_eval do
+          Person.reset_callbacks(:validate)
+          validates :avatar, file_size: { greater_than: 20.kilobytes,
+                                          less_than:    40.kilobytes }
+        end
+      end
+
+      subject { Person.new }
+
+      context 'when file size is out of range' do
+        before { subject.avatar = Rack::Test::UploadedFile.new(@cute_path) }
+        it { is_expected.not_to be_valid }
+      end
+
+      context 'when file size is out of range' do
+        before { subject.avatar = Rack::Test::UploadedFile.new(@chubby_cute_path) }
+        it { is_expected.not_to be_valid }
+      end
+
+      context 'when file size within range' do
+        before { subject.avatar = Rack::Test::UploadedFile.new(@chubby_bubble_path) }
+        it { is_expected.to be_valid }
       end
     end
 
-    subject { Person.new }
+    context 'as procs' do
+      before :all do
+        Person.class_eval do
+          Person.reset_callbacks(:validate)
+          validates :avatar, file_size: { greater_than: lambda { |record| 20.kilobytes },
+                                          less_than:    lambda { |record| 40.kilobytes } }
+        end
+      end
 
-    context 'when file size is out of range' do
-      before { subject.avatar = Rack::Test::UploadedFile.new(@cute_path) }
-      it { is_expected.not_to be_valid }
-    end
+      subject { Person.new }
 
-    context 'when file size is out of range' do
-      before { subject.avatar = Rack::Test::UploadedFile.new(@chubby_cute_path) }
-      it { is_expected.not_to be_valid }
-    end
+      context 'when file size is out of range' do
+        before { subject.avatar = Rack::Test::UploadedFile.new(@cute_path) }
+        it { is_expected.not_to be_valid }
+      end
 
-    context 'when file size within range' do
-      before { subject.avatar = Rack::Test::UploadedFile.new(@chubby_bubble_path) }
-      it { is_expected.to be_valid }
+      context 'when file size is out of range' do
+        before { subject.avatar = Rack::Test::UploadedFile.new(@chubby_cute_path) }
+        it { is_expected.not_to be_valid }
+      end
+
+      context 'when file size within range' do
+        before { subject.avatar = Rack::Test::UploadedFile.new(@chubby_bubble_path) }
+        it { is_expected.to be_valid }
+      end
     end
   end
 

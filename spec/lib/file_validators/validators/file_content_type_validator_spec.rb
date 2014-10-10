@@ -28,6 +28,11 @@ describe ActiveModel::Validations::FileContentTypeValidator do
         before { build_validator allow: ['image/png', 'image/jpg', 'image/jpeg'] }
         it { is_expected.to allow_file_content_type('image/png', @validator) }
       end
+
+      context 'as a proc' do
+        before { build_validator allow: lambda { |record| ['image/png', 'image/jpg', 'image/jpeg'] } }
+        it { is_expected.to allow_file_content_type('image/png', @validator) }
+      end
     end
   
     context 'with a disallowed type' do
@@ -38,6 +43,11 @@ describe ActiveModel::Validations::FileContentTypeValidator do
   
       context 'as a regexp' do
         before { build_validator allow: /^text\/.*/ }
+        it { is_expected.not_to allow_file_content_type('image/png', @validator) }
+      end
+
+      context 'as a proc' do
+        before { build_validator allow: lambda { |record| /^text\/.*/ } }
         it { is_expected.not_to allow_file_content_type('image/png', @validator) }
       end
   
@@ -79,6 +89,11 @@ describe ActiveModel::Validations::FileContentTypeValidator do
         before { build_validator exclude: ['image/png', 'image/jpg', 'image/jpeg'] }
         it { is_expected.to allow_file_content_type('image/gif', @validator) }
       end
+
+      context 'as a proc' do
+        before { build_validator exclude: lambda { |record| ['image/png', 'image/jpg', 'image/jpeg'] } }
+        it { is_expected.to allow_file_content_type('image/gif', @validator) }
+      end
     end
   
     context 'with a disallowed type' do
@@ -89,6 +104,11 @@ describe ActiveModel::Validations::FileContentTypeValidator do
 
       context 'as an regexp' do
         before { build_validator exclude: /^text\/.*/ }
+        it { is_expected.not_to allow_file_content_type('text/plain', @validator) }
+      end
+
+      context 'as an proc' do
+        before { build_validator exclude: lambda { |record| /^text\/.*/ } }
         it { is_expected.not_to allow_file_content_type('text/plain', @validator) }
       end
   

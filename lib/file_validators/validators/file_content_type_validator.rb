@@ -19,23 +19,21 @@ module ActiveModel
       end
 
       def validate_whitelist(record, attribute, value)
+        allowed_types = [options_call(record, :allow)].flatten.compact
         if allowed_types.present? && allowed_types.none? { |type| type === value }
           record.errors.add attribute, :allowed_file_content_types, options.merge(:types => allowed_types.join(', '))
         end
       end
 
       def validate_blacklist(record, attribute, value)
+        forbidden_types = [options_call(record, :exclude)].flatten.compact
         if forbidden_types.present? && forbidden_types.any? { |type| type === value }
           record.errors.add attribute, :excluded_file_content_types, options.merge(:types => forbidden_types.join(', '))
         end
       end
 
-      def allowed_types
-        @allowed_types ||= [options[:allow]].flatten.compact
-      end
-
-      def forbidden_types
-        @forbidden_types ||= [options[:exclude]].flatten.compact
+      def options_call(record, key)
+        options[key].is_a?(Proc) ? options[key].call(record) : options[key]
       end
 
       def check_validity!
