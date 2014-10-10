@@ -157,7 +157,7 @@ of the file matches anyone of them. takes `types` as replacement.
 
 This gem provides `en` translations for this errors under `errors.messages` namespace.
 If you want to override and/or create other locales, you can
-check [this](https://github.com/musaffa/file_validators/blob/master/lib/locale/en.yml) out to see how translations are done.  
+check [this](https://github.com/musaffa/file_validators/blob/master/lib/file_validators/locale/en.yml) out to see how translations are done.  
 
 You can override all of them with the `:message` option.
 
