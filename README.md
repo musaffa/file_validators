@@ -6,7 +6,7 @@
 [![Coverage Status](http://img.shields.io/coveralls/musaffa/file_validators.svg)](https://coveralls.io/r/musaffa/file_validators)
 [![Code Climate](http://img.shields.io/codeclimate/github/musaffa/file_validators.svg)](https://codeclimate.com/github/musaffa/file_validators)
 
-File Validators gem adds to file size and content type validations to ActiveModel. Any module that uses ActiveModel, for example ActiveRecord, can use these file validators.
+File Validators gem adds file size and content type validations to ActiveModel. Any module that uses ActiveModel, for example ActiveRecord, can use these file validators.
 
 ## Support
 
@@ -59,14 +59,6 @@ validates :avatar, file_size: { less_than_or_equal_to: 50.bytes }
 ```ruby
 validates :avatar, file_size: { greater_than_or_equal_to: 50.bytes } 
 ```
-Following two examples are equivalent:
-```ruby
-validates :avatar, file_size: { greater_than_or_equal_to: 500.kilobytes,
-                                less_than_or_equal_to: 3.megabytes }
-```
-```ruby
-validates :avatar, file_size: { in: 500.kilobytes..3.megabytes }
-```
 * `less_than`: Less than a number in bytes
 ```ruby
 validates :avatar, file_size: { less_than: 2.gigabytes }
@@ -75,6 +67,20 @@ validates :avatar, file_size: { less_than: 2.gigabytes }
 ```ruby
 validates :avatar, file_size: { greater_than: 1.byte } 
 ```
+You can also combine these options.
+```ruby
+validates :avatar, file_size: { less_than: 1.megabyte,
+                                greater_than_or_equal_to: 20.kilobytes }
+```
+The following two examples are equivalent:
+```ruby
+validates :avatar, file_size: { greater_than_or_equal_to: 500.kilobytes,
+                                less_than_or_equal_to: 3.megabytes }
+```
+```ruby
+validates :avatar, file_size: { in: 500.kilobytes..3.megabytes }
+```
+If you use `:in`, then the other options will be neglected.
 * `message`: Error message to display. With all the options above except `:in`, you will get `count` as a replacement. 
 With `:in` you will get `min` and `max` as replacements. 
 `count`, `min` and `max` each will have its value and unit together.
@@ -105,10 +111,18 @@ validates :attachment, file_content_type: { allow: ['image/jpeg', 'image/png', '
 # regexp
 validates :avatar, file_content_type: { allow: /^image\/.*/ }
 ```
+```ruby
+# array of regexps
+validates :attachment, file_content_type: { allow: [/^image\/.*/, /^text\/.*/] }
+```
+```ruby
+# array of regexps and strings
+validates :attachment, file_content_type: { allow: [/^image\/.*/, 'video/mp4'] }
+```
 * `exclude`: Forbidden content types. Can be a single content type or an array.  Each type can be a String or a Regexp.
 ```ruby
 # string
-validates :avatar, file_content_type: { allow: /^image\/.*/, exclude: 'image/jpeg' }
+validates :avatar, file_content_type: { exclude: 'image/jpeg' }
 ```
 ```ruby
 # array of strings
@@ -118,6 +132,19 @@ validates :attachment, file_content_type: { exclude: ['image/jpeg', 'text/plain'
 # regexp
 validates :avatar, file_content_type: { exclude: /^image\/.*/ }
 ```
+```ruby
+# array of regexps
+validates :attachment, file_content_type: { exclude: [/^image\/.*/, /^text\/.*/] }
+```
+```ruby
+# array of regexps and strings
+validates :attachment, file_content_type: { exclude: [/^text\/.*/, 'image/gif'] }
+```
+You can also combine `:allow` and `:exclude`:
+```ruby
+# this will allow all the image types except gif
+validates :avatar, file_content_type: { allow: /^image\/.*/, exclude: 'image/gif' }
+```
 * `message`: The message to display when the uploaded file has an invalid content type.
 You will get `types` as a replacement. You can write error messages without using any replacement.
 ```ruby
@@ -125,7 +152,7 @@ validates :avatar, file_content_type: { allow: ['image/jpeg', 'image/gif'],
                                         message: 'should have content type %{types}' }
 ```
 ```ruby
-validates :avatar, file_content_type: { allow: ['image/jpeg', 'text/plain'],
+validates :avatar, file_content_type: { allow: ['image/jpeg', 'image/gif'],
                                         message: 'Avatar only allows jpeg and gif image files' }
 ```
 * `if`: A lambda or name of an instance method. Validation will only be run is this lambda or method returns true.
@@ -133,9 +160,9 @@ validates :avatar, file_content_type: { allow: ['image/jpeg', 'text/plain'],
 
 ## i18n Translations
 
-By default, Size Validator will use the error messages of `:less_than`, `:greater_than_or_equal_to` etc from `errors.messages` of your locale. `errors.messages` translation is available under ActiveModel's locale.
+By default, `FileSizeValidator` will use the error messages of `:less_than`, `:greater_than_or_equal_to` etc from `errors.messages` of your locale. `errors.messages` translation is available under ActiveModel's locale.
 
-For `:in`, `:allow` and `:exclude` you have to write your own error messages under `errors.messages`.  
+For `:in`, `:allow` and `:exclude` you will have to write your own error messages under `errors.messages`.  
 
 You can override all of them with the `:message` option.
 
