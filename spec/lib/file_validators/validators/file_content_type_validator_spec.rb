@@ -55,6 +55,11 @@ describe ActiveModel::Validations::FileContentTypeValidator do
                                                           message: 'Avatar should have content type image/png') }
         end
       end
+
+      context 'default message' do
+        before { build_validator allow: 'image/png' }
+        it { is_expected.not_to allow_file_content_type('image/jpeg', @validator, message: 'Avatar file should be one of image/png') }
+      end
     end
   end
 
@@ -100,6 +105,11 @@ describe ActiveModel::Validations::FileContentTypeValidator do
           it { is_expected.to allow_file_content_type('image/jpeg', @validator,
                                                       message: 'Avatar should not have content type image/jpeg') }
         end
+      end
+
+      context 'default message' do
+        before { build_validator exclude: 'image/png' }
+        it { is_expected.not_to allow_file_content_type('image/png', @validator, message: 'Avatar file cannot be image/png') }
       end
     end
   end

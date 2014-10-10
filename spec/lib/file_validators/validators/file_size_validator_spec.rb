@@ -81,6 +81,35 @@ describe ActiveModel::Validations::FileSizeValidator do
                                         message: "Avatar is invalid. (Between #{@storage_units[5120]} and #{@storage_units[10240]} please.)") }
   end
 
+  context 'default error message' do
+    context 'given :in options' do
+      before { build_validator in: 5.kilobytes..10.kilobytes }
+
+      it { is_expected.not_to allow_file_size(11.kilobytes, @validator,
+                                              message: "Avatar file size must be between #{@storage_units[5120]} and #{@storage_units[10240]}") }
+      it { is_expected.not_to allow_file_size(4.kilobytes, @validator,
+                                              message: "Avatar file size must be between #{@storage_units[5120]} and #{@storage_units[10240]}") }
+    end
+
+    context 'given :greater_than and :less_than options' do
+      before { build_validator greater_than: 5.kilobytes, less_than: 10.kilobytes }
+
+      it { is_expected.not_to allow_file_size(11.kilobytes, @validator,
+                                              message: "Avatar file size must be less than #{@storage_units[10240]}") }
+      it { is_expected.not_to allow_file_size(4.kilobytes, @validator,
+                                              message: "Avatar file size must be greater than #{@storage_units[5120]}") }
+    end
+
+    context 'given :greater_than_or_equal_to and :less_than_or_equal_to options' do
+      before { build_validator greater_than_or_equal_to: 5.kilobytes, less_than_or_equal_to: 10.kilobytes }
+
+      it { is_expected.not_to allow_file_size(11.kilobytes, @validator,
+                                              message: "Avatar file size must be less than or equal to #{@storage_units[10240]}") }
+      it { is_expected.not_to allow_file_size(4.kilobytes, @validator,
+                                              message: "Avatar file size must be greater than or equal to #{@storage_units[5120]}") }
+    end
+  end
+
 
   context 'using the helper' do
     before { Dummy.validates_file_size :avatar, in: (5.kilobytes..10.kilobytes) }

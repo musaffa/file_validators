@@ -18,7 +18,9 @@ module ActiveModel
           options.slice(*AVAILABLE_CHECKS).each do |option, option_value|
             unless value.size.send(CHECKS[option], option_value)
               error_message_key = options[:in] ? :in : option
-              record.errors.add(attribute, error_message_key, filtered_options(value).merge!(detect_error_options(option, option_value)))
+              record.errors.add(attribute,
+                                "file_size_is_#{error_message_key}".to_sym,
+                                filtered_options(value).merge!(detect_error_options(option, option_value)))
             end
           end
         end

@@ -51,36 +51,22 @@ end
 ```ruby
 validates :avatar, file_size: { in: 100.kilobytes..1.megabyte }
 ```
-* `less_than_or_equal_to`: Less than or equal to a number in bytes
-```ruby
-validates :avatar, file_size: { less_than_or_equal_to: 50.bytes } 
-```
-* `greater_than_or_equal_to`: Greater than or equal to a number in bytes
-```ruby
-validates :avatar, file_size: { greater_than_or_equal_to: 50.bytes } 
-```
 * `less_than`: Less than a number in bytes
 ```ruby
 validates :avatar, file_size: { less_than: 2.gigabytes }
+```
+* `less_than_or_equal_to`: Less than or equal to a number in bytes
+```ruby
+validates :avatar, file_size: { less_than_or_equal_to: 50.bytes } 
 ```
 * `greater_than`: greater than a number in bytes
 ```ruby
 validates :avatar, file_size: { greater_than: 1.byte } 
 ```
-You can also combine these options.
+* `greater_than_or_equal_to`: Greater than or equal to a number in bytes
 ```ruby
-validates :avatar, file_size: { less_than: 1.megabyte,
-                                greater_than_or_equal_to: 20.kilobytes }
+validates :avatar, file_size: { greater_than_or_equal_to: 50.bytes } 
 ```
-The following two examples are equivalent:
-```ruby
-validates :avatar, file_size: { greater_than_or_equal_to: 500.kilobytes,
-                                less_than_or_equal_to: 3.megabytes }
-```
-```ruby
-validates :avatar, file_size: { in: 500.kilobytes..3.megabytes }
-```
-If you use `:in`, then the other options will be neglected.
 * `message`: Error message to display. With all the options above except `:in`, you will get `count` as a replacement. 
 With `:in` you will get `min` and `max` as replacements. 
 `count`, `min` and `max` each will have its value and unit together.
@@ -95,6 +81,21 @@ validates :document, file_size: { in: 1.kilobyte..1.megabyte,
 ```
 * `if`: A lambda or name of an instance method. Validation will only be run if this lambda or method returns true.
 * `unless`: Same as `if` but validates if lambda or method returns false.
+
+You can combine different options.
+```ruby
+validates :avatar, file_size: { less_than: 1.megabyte,
+                                greater_than_or_equal_to: 20.kilobytes }
+```
+The following two examples are equivalent:
+```ruby
+validates :avatar, file_size: { greater_than_or_equal_to: 500.kilobytes,
+                                less_than_or_equal_to: 3.megabytes }
+```
+```ruby
+validates :avatar, file_size: { in: 500.kilobytes..3.megabytes }
+```
+If you use `:in`, then the other options will be neglected.
 
 ### File Content Type Validator
 
@@ -120,30 +121,11 @@ validates :attachment, file_content_type: { allow: [/^image\/.*/, /^text\/.*/] }
 validates :attachment, file_content_type: { allow: [/^image\/.*/, 'video/mp4'] }
 ```
 * `exclude`: Forbidden content types. Can be a single content type or an array.  Each type can be a String or a Regexp.
-```ruby
-# string
-validates :avatar, file_content_type: { exclude: 'image/jpeg' }
-```
-```ruby
-# array of strings
-validates :attachment, file_content_type: { exclude: ['image/jpeg', 'text/plain'] }
-```
-```ruby
-# regexp
-validates :avatar, file_content_type: { exclude: /^image\/.*/ }
-```
-```ruby
-# array of regexps
-validates :attachment, file_content_type: { exclude: [/^image\/.*/, /^text\/.*/] }
-```
-```ruby
-# array of regexps and strings
-validates :attachment, file_content_type: { exclude: [/^text\/.*/, 'image/gif'] }
-```
+
 You can also combine `:allow` and `:exclude`:
 ```ruby
-# this will allow all the image types except gif
-validates :avatar, file_content_type: { allow: /^image\/.*/, exclude: 'image/gif' }
+# this will allow all the image types except png and gif
+validates :avatar, file_content_type: { allow: /^image\/.*/, exclude: ['image/png', 'image/gif'] }
 ```
 * `message`: The message to display when the uploaded file has an invalid content type.
 You will get `types` as a replacement. You can write error messages without using any replacement.
@@ -160,14 +142,27 @@ validates :avatar, file_content_type: { allow: ['image/jpeg', 'image/gif'],
 
 ## i18n Translations
 
-By default, `FileSizeValidator` will use the error messages of `:less_than`, `:greater_than_or_equal_to` etc from `errors.messages` of your locale. `errors.messages` translation is available under ActiveModel's locale.
+File Size Errors
+* `file_size_is_in`: takes `min` and `max` as replacements
+* `file_size_is_less_than`: takes `count` as replacement
+* `file_size_is_less_than_or_equal_to`: takes `count` as replacement
+* `file_size_is_greater_than`: takes `count` as replacement
+* `file_size_is_greater_than_or_equal_to`: takes `count` as replacement
 
-For `:in`, `:allow` and `:exclude` you will have to write your own error messages under `errors.messages`.  
+Content Type Errors
+* `allowed_file_content_types`: generated when you have specified allowed types but the content type
+of the file doesn't match. takes `types` as replacement.
+* `excluded_file_content_types`: generated when you have specified excluded types and the content type
+of the file matches anyone of them. takes `types` as replacement.
+
+This gem provides `en` translations for this errors under `errors.messages` namespace.
+If you want to override and/or create other locales, you can
+check [this](https://github.com/musaffa/file_validators/blob/master/lib/locale/en.yml) out to see how translations are done.  
 
 You can override all of them with the `:message` option.
 
 For unit format, it will use `number.human.storage_units.format` from your locale.
-For unit translation, it will use `number.human.storage_units`.
+For unit translation, `number.human.storage_units` is used.
 Rails applications already have these translations either in ActiveSupport's locale (Rails 4) or in ActionView's locale (Rails 3).
 In case your setup doesn't have the translations, here's an example for `en`:
 
