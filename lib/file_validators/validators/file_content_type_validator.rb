@@ -1,7 +1,7 @@
 module ActiveModel
   module Validations
 
-    class FileContentTypeValidator < EachValidator
+    class FileContentTypeValidator < ActiveModel::EachValidator
       CHECKS = [:allow, :exclude].freeze
 
       def self.helper_method_name

@@ -1,7 +1,7 @@
 module ActiveModel
   module Validations
 
-    class FileSizeValidator < EachValidator
+    class FileSizeValidator < ActiveModel::EachValidator
       CHECKS = { in: :===,
                  less_than: :<,
                  less_than_or_equal_to: :<=,
