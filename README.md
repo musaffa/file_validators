@@ -1,10 +1,10 @@
 # File Validators
 
-[![Gem Version](http://img.shields.io/gem/v/file_validators.svg)](https://rubygems.org/gems/file_validators)
+[![Gem Version](https://badge.fury.io/rb/file_validators.svg)](http://badge.fury.io/rb/file_validators)
 [![Build Status](https://travis-ci.org/musaffa/file_validators.svg)](https://travis-ci.org/musaffa/file_validators)
-[![Dependency Status](http://img.shields.io/gemnasium/musaffa/file_validators.svg)](https://gemnasium.com/musaffa/file_validators)
-[![Coverage Status](http://img.shields.io/coveralls/musaffa/file_validators.svg)](https://coveralls.io/r/musaffa/file_validators)
-[![Code Climate](http://img.shields.io/codeclimate/github/musaffa/file_validators.svg)](https://codeclimate.com/github/musaffa/file_validators)
+[![Dependency Status](https://gemnasium.com/musaffa/file_validators.svg)](https://gemnasium.com/musaffa/file_validators)
+[![Coverage Status](https://coveralls.io/repos/musaffa/file_validators/badge.png)](https://coveralls.io/r/musaffa/file_validators)
+[![Code Climate](https://codeclimate.com/github/musaffa/file_validators/badges/gpa.svg)](https://codeclimate.com/github/musaffa/file_validators)
 
 File Validators gem adds file size and content type validations to ActiveModel. Any module that uses ActiveModel, for example ActiveRecord, can use these file validators.
 
@@ -31,7 +31,7 @@ class Profile
 
   attr_accessor :avatar
   validates :avatar, file_size: { less_than_or_equal_to: 100.kilobytes },
-                     file_content_type: { allow: ['image/jpeg', 'image/png', 'image/gif'] } 
+                     file_content_type: { allow: ['image/jpeg', 'image/png'] } 
 end
 ```
 ActiveRecord example:
@@ -39,7 +39,7 @@ ActiveRecord example:
 ```ruby
 class Profile < ActiveRecord::Base
   validates :avatar, file_size: { less_than_or_equal_to: 100.kilobytes },
-                     file_content_type: { allow: ['image/jpeg', 'image/png', 'image/gif'] }
+                     file_content_type: { allow: ['image/jpeg', 'image/png'] }
 end
 ```
 
@@ -73,11 +73,11 @@ With `:in` you will get `min` and `max` as replacements.
 You can write error messages without using any replacement.
 ```ruby
 validates :avatar, file_size: { less_than: 100.kilobytes,
-                                message: 'avatar file size should be less than %{count}' } 
+                                message: 'avatar should be less than %{count}' } 
 ```
 ```ruby
 validates :document, file_size: { in: 1.kilobyte..1.megabyte,
-                                  message: 'document should be within %{min} and %{max}' }
+                                  message: 'must be within %{min} and %{max}' }
 ```
 * `if`: A lambda or name of an instance method. Validation will only be run if this lambda or method returns true.
 * `unless`: Same as `if` but validates if lambda or method returns false.
@@ -110,7 +110,7 @@ validates :avatar, file_content_type: { allow: 'image/jpeg' }
 ```
 ```ruby
 # array of strings
-validates :attachment, file_content_type: { allow: ['image/jpeg', 'image/png', 'text/plain'] }
+validates :attachment, file_content_type: { allow: ['image/jpeg', 'text/plain'] }
 ```
 ```ruby
 # regexp
@@ -133,11 +133,11 @@ validates :video, file_content_type: { allow: lambda { |record| record.content_t
 You will get `types` as a replacement. You can write error messages without using any replacement.
 ```ruby
 validates :avatar, file_content_type: { allow: ['image/jpeg', 'image/gif'],
-                                        message: 'should have content type %{types}' }
+                                        message: 'only %{types} are allowed' }
 ```
 ```ruby
 validates :avatar, file_content_type: { allow: ['image/jpeg', 'image/gif'],
-                                        message: 'Avatar only allows jpeg and gif image files' }
+                                        message: 'Avatar only allows jpeg and gif' }
 ```
 * `if`: A lambda or name of an instance method. Validation will only be run is this lambda or method returns true.
 * `unless`: Same as `if` but validates if lambda or method returns false.
