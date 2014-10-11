@@ -103,7 +103,7 @@ validates :avatar, file_size: { less_than: lambda { |record| record.size_in_byte
 
 ### File Content Type Validator
 
-* `allow`: Allowed content types.  Can be a single content type or an array.  Each type can be a String or a Regexp. It also accepts proc. Allows all by default.
+* `allow`: Allowed content types.  Can be a single content type or an array.  Each type can be a String or a Regexp. It also accepts `proc`. Allows all by default.
 ```ruby
 # string
 validates :avatar, file_content_type: { allow: 'image/jpeg' }
