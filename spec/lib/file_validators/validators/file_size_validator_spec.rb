@@ -183,7 +183,7 @@ describe ActiveModel::Validations::FileSizeValidator do
       expect { build_validator message: 'Some message' }.to raise_error(ArgumentError)
     end
 
-    (ActiveModel::Validations::FileSizeValidator::AVAILABLE_CHECKS).each do |argument|
+    (ActiveModel::Validations::FileSizeValidator::CHECKS.keys).each do |argument|
       it "does not raise argument error if #{argument} was given" do
         expect { build_validator argument => 5.kilobytes }.not_to raise_error
       end

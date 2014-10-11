@@ -1,13 +1,12 @@
 module ActiveModel
   module Validations
 
-    class FileSizeValidator < ActiveModel::Validations::NumericalityValidator
-      AVAILABLE_CHECKS = [:less_than, :less_than_or_equal_to, :greater_than, :greater_than_or_equal_to].freeze
-
-      def initialize(options)
-        extract_options(options)
-        super
-      end
+    class FileSizeValidator < EachValidator
+      CHECKS = { in: :===,
+                 less_than: :<,
+                 less_than_or_equal_to: :<=,
+                 greater_than: :>,
+                 greater_than_or_equal_to: :>= }.freeze
 
       def self.helper_method_name
         :validates_file_size
@@ -15,64 +14,51 @@ module ActiveModel
 
       def validate_each(record, attribute, value)
         unless value.blank?
-          options.slice(*AVAILABLE_CHECKS).each do |option, option_value|
+          options.slice(*CHECKS.keys).each do |option, option_value|
             option_value = option_value.call(record) if option_value.is_a?(Proc)
-            option_value = extract_option_value(option, option_value)
-            unless value.size.send(CHECKS[option], option_value)
-              error_message_key = options[:in] ? :in : option
+            unless valid_size?(value.size, option, option_value)
               record.errors.add(attribute,
-                                "file_size_is_#{error_message_key}".to_sym,
-                                filtered_options(value).merge!(detect_error_options(option, option_value)))
+                                "file_size_is_#{option}".to_sym,
+                                filtered_options(value).merge!(detect_error_options(option_value)))
             end
           end
         end
       end
 
       def check_validity!
-        unless (AVAILABLE_CHECKS + [:in]).any? { |argument| options.has_key?(argument) }
-          raise ArgumentError, 'List of allowed options - [:in, :less_than, :greater_than, :less_than_or_equal_to, :greater_than_or_equal_to]'
+        unless (CHECKS.keys & options.keys).present?
+          raise ArgumentError, 'You must at least pass in one of these options - :in, :less_than,
+                                :less_than_or_equal_to, :greater_than and :greater_than_or_equal_to'
+        end
+
+        options.slice(*CHECKS.keys).each do |option, value|
+          unless value.is_a?(Numeric) || value.is_a?(Range) || value.is_a?(Proc)
+            raise ArgumentError, ":#{option} must be a number, a range or a proc"
+          end
         end
       end
 
       private
 
-      def extract_options(options)
-        if range = options[:in]
-          clear_options(options)
-
-          case range
-            when Range
-              options[:less_than_or_equal_to], options[:greater_than_or_equal_to] = range.max, range.min
-            when Proc
-              options[:less_than_or_equal_to] = range
-              options[:greater_than_or_equal_to] = range
-          else
-            raise ArgumentError, ':in must be a Range or a Proc'
-          end
-        end
-      end
-
-      def clear_options(options)
-        AVAILABLE_CHECKS.each do |option|
-          options.delete(option)
-        end
-      end
-
-      def extract_option_value(option, option_value)
+      def valid_size?(size, option, option_value)
         if option_value.is_a?(Range)
-          option == :less_than_or_equal_to ? option_value.max : option_value.min
+          option_value.send(CHECKS[option], size)
         else
-          option_value
+          size.send(CHECKS[option], option_value)
         end
       end
 
-      def detect_error_options(option, option_value)
-        if options[:in]
-          max = options[:less_than_or_equal_to]
-          min =  options[:greater_than_or_equal_to]
-          error_options = { min: human_size(min), max: human_size(max)  }
+      def filtered_options(value)
+        filtered = options.except(*CHECKS.keys)
+        filtered[:value] = value
+        filtered
+      end
+
+      def detect_error_options(option_value)
+        if option_value.is_a?(Range)
+          { min: human_size(option_value.min), max: human_size(option_value.max)  }
         else
-          error_options = { count: human_size(option_value) }
+          { count: human_size(option_value) }
         end
       end
 
