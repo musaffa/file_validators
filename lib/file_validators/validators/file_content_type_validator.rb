@@ -1,10 +1,8 @@
 module ActiveModel
   module Validations
 
-    class FileContentTypeValidator < ActiveModel::EachValidator
-      def initialize(options)
-        super
-      end
+    class FileContentTypeValidator < EachValidator
+      CHECKS = [:allow, :exclude].freeze
 
       def self.helper_method_name
         :validates_file_content_type
@@ -17,6 +15,20 @@ module ActiveModel
           validate_blacklist(record, attribute, content_type)
         end
       end
+
+      def check_validity!
+        unless (CHECKS & options.keys).present?
+          raise ArgumentError, 'You must at least pass in :allow or :exclude option'
+        end
+
+        options.slice(*CHECKS).each do |option, value|
+          unless value.is_a?(String) || value.is_a?(Array) || value.is_a?(Regexp) || value.is_a?(Proc)
+            raise ArgumentError, ":#{option} must be a string, an array, a regex or a proc"
+          end
+        end
+      end
+
+      private
 
       def validate_whitelist(record, attribute, value)
         allowed_types = [options_call(record, :allow)].flatten.compact
@@ -34,12 +46,6 @@ module ActiveModel
 
       def options_call(record, key)
         options[key].is_a?(Proc) ? options[key].call(record) : options[key]
-      end
-
-      def check_validity!
-        unless options.has_key?(:allow) || options.has_key?(:exclude)
-          raise ArgumentError, 'You must pass in either :allow or :exclude to the validator'
-        end
       end
     end
 
