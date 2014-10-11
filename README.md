@@ -47,23 +47,23 @@ end
 
 ### File Size Validator:
 
-* `in`: A range of bytes
+* `in`: A range of bytes or a proc that returns a range
 ```ruby
 validates :avatar, file_size: { in: 100.kilobytes..1.megabyte }
 ```
-* `less_than`: Less than a number in bytes
+* `less_than`: Less than a number in bytes or a proc that returns a number
 ```ruby
 validates :avatar, file_size: { less_than: 2.gigabytes }
 ```
-* `less_than_or_equal_to`: Less than or equal to a number in bytes
+* `less_than_or_equal_to`: Less than or equal to a number in bytes or a proc that returns a number
 ```ruby
 validates :avatar, file_size: { less_than_or_equal_to: 50.bytes } 
 ```
-* `greater_than`: greater than a number in bytes
+* `greater_than`: greater than a number in bytes or a proc that returns a number
 ```ruby
 validates :avatar, file_size: { greater_than: 1.byte } 
 ```
-* `greater_than_or_equal_to`: Greater than or equal to a number in bytes
+* `greater_than_or_equal_to`: Greater than or equal to a number in bytes or a proc that returns a number
 ```ruby
 validates :avatar, file_size: { greater_than_or_equal_to: 50.bytes } 
 ```
@@ -95,11 +95,15 @@ validates :avatar, file_size: { greater_than_or_equal_to: 500.kilobytes,
 ```ruby
 validates :avatar, file_size: { in: 500.kilobytes..3.megabytes }
 ```
-If you use `:in`, then the other options will be neglected.
+Options can also take `Proc`/`lambda`:
+
+```ruby
+validates :avatar, file_size: { less_than: lambda { |record| record.size_in_bytes } }
+```
 
 ### File Content Type Validator
 
-* `allow`: Allowed content types.  Can be a single content type or an array.  Each type can be a String or a Regexp. Allows all by default.
+* `allow`: Allowed content types.  Can be a single content type or an array.  Each type can be a String or a Regexp. It also accepts proc. Allows all by default.
 ```ruby
 # string
 validates :avatar, file_content_type: { allow: 'image/jpeg' }
@@ -120,13 +124,11 @@ validates :attachment, file_content_type: { allow: [/^image\/.*/, /^text\/.*/] }
 # array of regexps and strings
 validates :attachment, file_content_type: { allow: [/^image\/.*/, 'video/mp4'] }
 ```
-* `exclude`: Forbidden content types. Can be a single content type or an array.  Each type can be a String or a Regexp.
-
-You can also combine `:allow` and `:exclude`:
 ```ruby
-# this will allow all the image types except png and gif
-validates :avatar, file_content_type: { allow: /^image\/.*/, exclude: ['image/png', 'image/gif'] }
+# proc/lambda example
+validates :video, file_content_type: { allow: lambda { |record| record.content_types } }
 ```
+* `exclude`: Forbidden content types. Can be a single content type or an array.  Each type can be a String or a Regexp. It also accepts `proc`. See `:allow` options examples.
 * `message`: The message to display when the uploaded file has an invalid content type.
 You will get `types` as a replacement. You can write error messages without using any replacement.
 ```ruby
@@ -139,6 +141,12 @@ validates :avatar, file_content_type: { allow: ['image/jpeg', 'image/gif'],
 ```
 * `if`: A lambda or name of an instance method. Validation will only be run is this lambda or method returns true.
 * `unless`: Same as `if` but validates if lambda or method returns false.
+
+You can combine `:allow` and `:exclude`:
+```ruby
+# this will allow all the image types except png and gif
+validates :avatar, file_content_type: { allow: /^image\/.*/, exclude: ['image/png', 'image/gif'] }
+```
 
 ## i18n Translations
 
