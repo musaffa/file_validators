@@ -5,6 +5,7 @@
 [![Dependency Status](https://gemnasium.com/musaffa/file_validators.svg)](https://gemnasium.com/musaffa/file_validators)
 [![Coverage Status](https://coveralls.io/repos/musaffa/file_validators/badge.png)](https://coveralls.io/r/musaffa/file_validators)
 [![Code Climate](https://codeclimate.com/github/musaffa/file_validators/badges/gpa.svg)](https://codeclimate.com/github/musaffa/file_validators)
+[![Inline docs](http://inch-ci.org/github/musaffa/file_validators.svg)](http://inch-ci.org/github/musaffa/file_validators)
 
 File Validators gem adds file size and content type validations to ActiveModel. Any module that uses ActiveModel, for example ActiveRecord, can use these file validators.
 
