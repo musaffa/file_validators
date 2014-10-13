@@ -147,12 +147,17 @@ describe ActiveModel::Validations::FileContentTypeValidator do
       expect { build_validator message: 'Some message' }.to raise_error(ArgumentError)
     end
 
-    it 'does not raise argument error if :in was given' do
-      expect { build_validator allow: 'image/jpg' }.not_to raise_error
-    end
+    ActiveModel::Validations::FileContentTypeValidator::CHECKS.each do |argument|
+      it "does not raise error if :#{argument} is string, array, regexp or a proc" do
+        expect { build_validator argument => 'image/jpg' }.not_to raise_error
+        expect { build_validator argument => ['image/jpg'] }.not_to raise_error
+        expect { build_validator argument => /^image\/.*/ }.not_to raise_error
+        expect { build_validator argument => lambda { |record| 'image/jpg' } }.not_to raise_error
+      end
 
-    it 'does not raise argument error if :exclude was given' do
-      expect { build_validator exclude: 'image/jpg' }.not_to raise_error
+      it "raises argument error if :#{argument} is neither a string, array, regexp nor proc" do
+        expect { build_validator argument => 5.kilobytes }.to raise_error(ArgumentError)
+      end
     end
   end
 end

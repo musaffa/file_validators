@@ -31,14 +31,19 @@ module ActiveModel
                                 :less_than_or_equal_to, :greater_than and :greater_than_or_equal_to'
         end
 
-        options.slice(*CHECKS.keys).each do |option, value|
-          unless value.is_a?(Numeric) || value.is_a?(Range) || value.is_a?(Proc)
-            raise ArgumentError, ":#{option} must be a number, a range or a proc"
-          end
-        end
+        check_options(Numeric, options.slice(*(CHECKS.keys - [:in])))
+        check_options(Range, options.slice(:in))
       end
 
       private
+
+      def check_options(klass, options)
+        options.each do |option, value|
+          unless value.is_a?(klass) || value.is_a?(Proc)
+            raise ArgumentError, ":#{option} must be a #{klass.name.to_s.downcase} or a proc"
+          end
+        end
+      end
 
       def valid_size?(size, option, option_value)
         if option_value.is_a?(Range)

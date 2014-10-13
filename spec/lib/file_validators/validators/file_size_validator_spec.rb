@@ -183,14 +183,24 @@ describe ActiveModel::Validations::FileSizeValidator do
       expect { build_validator message: 'Some message' }.to raise_error(ArgumentError)
     end
 
-    (ActiveModel::Validations::FileSizeValidator::CHECKS.keys).each do |argument|
-      it "does not raise argument error if #{argument} was given" do
+    (ActiveModel::Validations::FileSizeValidator::CHECKS.keys - [:in]).each do |argument|
+      it "does not raise argument error if :#{argument} is numeric or a proc" do
         expect { build_validator argument => 5.kilobytes }.not_to raise_error
+        expect { build_validator argument => lambda { |record| 5.kilobytes } }.not_to raise_error
+      end
+
+      it "raises error if :#{argument} is neither a number nor a proc" do
+        expect { build_validator argument => 5.kilobytes..10.kilobytes }.to raise_error(ArgumentError)
       end
     end
 
-    it 'does not raise argument error if :in was given' do
-      expect { build_validator in: (5.kilobytes..10.kilobytes) }.not_to raise_error
+    it 'does not raise argument error if :in is a range or a proc' do
+      expect { build_validator in: 5.kilobytes..10.kilobytes }.not_to raise_error
+      expect { build_validator in: lambda { |record| 5.kilobytes..10.kilobytes } }.not_to raise_error
+    end
+
+    it 'raises error if :in is neither a range nor a proc' do
+      expect { build_validator in: 5.kilobytes }.to raise_error(ArgumentError)
     end
   end
 end
