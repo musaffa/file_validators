@@ -1,3 +1,5 @@
+require 'file_validators/utils/content_type_detector'
+
 module ActiveModel
   module Validations
 
@@ -10,12 +12,12 @@ module ActiveModel
 
       def validate_each(record, attribute, value)
         unless value.blank?
+          content_type = detect_content_type(value.path)
           allowed_types = option_content_types(record, :allow)
           forbidden_types = option_content_types(record, :exclude)
-          file_type = value.content_type
 
-          validate_whitelist(record, attribute, file_type, allowed_types)
-          validate_blacklist(record, attribute, file_type, forbidden_types)
+          validate_whitelist(record, attribute, content_type, allowed_types)
+          validate_blacklist(record, attribute, content_type, forbidden_types)
         end
       end
 
@@ -41,20 +43,24 @@ module ActiveModel
         options[key].is_a?(Proc) ? options[key].call(record) : options[key]
       end
 
-      def validate_whitelist(record, attribute, file_type, allowed_types)
-        if allowed_types.present? and allowed_types.none? { |type| type === file_type }
+      def validate_whitelist(record, attribute, content_type, allowed_types)
+        if allowed_types.present? and allowed_types.none? { |type| type === content_type }
           mark_invalid record, attribute, :allowed_file_content_types, allowed_types
         end
       end
 
-      def validate_blacklist(record, attribute, file_type, forbidden_types)
-        if forbidden_types.any? { |type| type === file_type }
+      def validate_blacklist(record, attribute, content_type, forbidden_types)
+        if forbidden_types.any? { |type| type === content_type }
           mark_invalid record, attribute, :excluded_file_content_types, forbidden_types
         end
       end
 
       def mark_invalid(record, attribute, error, option_types)
         record.errors.add attribute, error, options.merge(types: option_types.join(', '))
+      end
+
+      def detect_content_type(file_path)
+        FileValidators::Utils::ContentTypeDetector.new(file_path).detect
       end
     end
 

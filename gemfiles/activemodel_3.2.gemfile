@@ -4,5 +4,6 @@ source "https://rubygems.org"
 
 gem "appraisal"
 gem "activemodel", "3.2.18"
+gem "cocaine", "0.5.4"
 
 gemspec :path => "../"
