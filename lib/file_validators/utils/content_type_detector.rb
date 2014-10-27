@@ -11,6 +11,12 @@ module FileValidators
         @file_path = file_path
       end
 
+      # content type detection strategy:
+      #
+      # 1. empty file: returns 'inode/x-empty'
+      # 2. nonempty file: if the file is not empty then returns the content type using file command
+      # 3. invalid file: file command raises error and returns 'application/octet-stream'
+
       def detect
         empty_file? ? EMPTY_CONTENT_TYPE : content_type_from_file_command
       end

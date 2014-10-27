@@ -44,6 +44,8 @@ class Profile < ActiveRecord::Base
 end
 ```
 
+You can also use `:validates_file_size` and `:validates_file_content_type` idioms.
+
 ## API
 
 ### File Size Validator:
@@ -148,6 +150,11 @@ You can combine `:allow` and `:exclude`:
 # this will allow all the image types except png and gif
 validates :avatar, file_content_type: { allow: /^image\/.*/, exclude: ['image/png', 'image/gif'] }
 ```
+
+## Security
+
+This gem uses file command to get the content type based on the content of the file rather
+than the extension. This prevents fake content types inserted in the request header.
 
 ## i18n Translations
 
