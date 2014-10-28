@@ -156,6 +156,14 @@ validates :avatar, file_content_type: { allow: /^image\/.*/, exclude: ['image/pn
 This gem uses file command to get the content type based on the content of the file rather
 than the extension. This prevents fake content types inserted in the request header.
 
+It also prevents file media type spoofing. For example, user may upload a .html document as 
+a part of the EXIF header of a valid JPEG file. Content type validator will identify its content type
+as `image/jpeg` and, without spoof detection, it may pass the validation and be saved as .html document
+thus exposing your application to a security vulnerability. Media type spoof detector wont let that happen.
+It will not allow a file having `image/jpeg` content type to be saved as `text/plain`. It checks only
+media type mismatch, for example `text` of `text/plain` and `image` of `image/jpeg`. So it will not prevent
+`image/jpeg` from saving as `image/png` as both have the same `image` media type.
+
 ## i18n Translations
 
 File Size Errors
@@ -166,6 +174,8 @@ File Size Errors
 * `file_size_is_greater_than_or_equal_to`: takes `count` as replacement
 
 Content Type Errors
+* `spoofed_file_media_type`: generated when file media type from its extension doesn't match the media type of its
+content. learn more from [security](#Security).
 * `allowed_file_content_types`: generated when you have specified allowed types but the content type
 of the file doesn't match. takes `types` as replacement.
 * `excluded_file_content_types`: generated when you have specified excluded types and the content type

@@ -9,6 +9,14 @@ module FileValidators
         @file_name = file_name
       end
 
+      # Media type spoof detection strategy:
+      #
+      # 1. It will not identify as spoofed if file name doesn't have any extension
+      # 2. It will identify as spoofed if any of the file extension's media types
+      # matches the media type of the content type. So it will return true for
+      # `text` of `text/plain` mismatch with `image` of `image/jpeg`, but return false
+      # for `image` of `image/png` match with `image` of `image/jpeg`.
+
       def spoofed?
         has_extension? and media_type_mismatch?
       end
