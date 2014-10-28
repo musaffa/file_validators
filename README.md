@@ -7,12 +7,16 @@
 [![Code Climate](https://codeclimate.com/github/musaffa/file_validators/badges/gpa.svg)](https://codeclimate.com/github/musaffa/file_validators)
 [![Inline docs](http://inch-ci.org/github/musaffa/file_validators.svg)](http://inch-ci.org/github/musaffa/file_validators)
 
-File Validators gem adds file size and content type validations to ActiveModel. Any module that uses ActiveModel, for example ActiveRecord, can use these file validators.
+File Validators gem adds file size and content type validations to ActiveModel.
+Any module that uses ActiveModel, for example ActiveRecord, can use these file validators.
 
 ## Support
 
 * ActiveModel versions: 3 and 4.
 * Rails versions: 3 and 4.
+
+It has been tested to work with Carrierwave, Paperclip, Dragonfly etc file uploading solutions.
+Validations works both before and after uploads.
 
 ## Installation
 
@@ -159,10 +163,9 @@ than the extension. This prevents fake content types inserted in the request hea
 It also prevents file media type spoofing. For example, user may upload a .html document as 
 a part of the EXIF header of a valid JPEG file. Content type validator will identify its content type
 as `image/jpeg` and, without spoof detection, it may pass the validation and be saved as .html document
-thus exposing your application to a security vulnerability. Media type spoof detector wont let that happen.
-It will not allow a file having `image/jpeg` content type to be saved as `text/plain`. It checks only
-media type mismatch, for example `text` of `text/plain` and `image` of `image/jpeg`. So it will not prevent
-`image/jpeg` from saving as `image/png` as both have the same `image` media type.
+thus exposing your application to a security vulnerability. Media type spoof detector wont let that happen. It will not allow a file having `image/jpeg` content type to be saved as `text/plain`. It checks only media type mismatch, for example `text` of `text/plain` and `image` of `image/jpeg`. So it will not prevent `image/jpeg` from saving as `image/png` as both have the same `image` media type.
+
+**note**: Media type spoof detection is integrated in the content type validator. This means without content type validation spoof detection wont be enabled.
 
 ## i18n Translations
 
