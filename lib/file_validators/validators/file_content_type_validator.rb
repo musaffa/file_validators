@@ -42,7 +42,7 @@ module ActiveModel
       def get_attr(value, attr)
         if value.try(attr)
           value.send(attr)
-        else value.try(:file).try(attr)
+        elsif value.try(:file).try(attr)
           value.file.send(attr)
         end
       end
