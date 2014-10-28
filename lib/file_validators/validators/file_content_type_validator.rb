@@ -39,23 +39,20 @@ module ActiveModel
 
       private
 
-      def get_attr(value, attr)
-        if value.try(attr)
-          value.send(attr)
-        elsif value.try(:file).try(attr)
-          value.file.send(attr)
+      def get_file_path(value)
+        if value.try(:path)
+          value.path
+        else
+          raise ArgumentError, 'value must return a file path in order to validate file content type'
         end
       end
 
-      def get_file_path(value)
-        file_path = get_attr(value, :path)
-        # don't allow nil for file_path
-        file_path ? file_path : (raise ArgumentError, 'value or value.file must return file path in order to validate file content type')
-      end
-
       def get_file_name(value)
-        file_name = get_attr(value, :original_filename)
-        file_name ? file_name : File.basename(get_file_path(value))
+        if value.try(:original_filename)
+          value.original_filename
+        else
+          File.basename(get_file_path(value))
+        end
       end
 
       def detect_content_type(file_path)
