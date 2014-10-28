@@ -165,7 +165,7 @@ a part of the EXIF header of a valid JPEG file. Content type validator will iden
 as `image/jpeg` and, without spoof detection, it may pass the validation and be saved as .html document
 thus exposing your application to a security vulnerability. Media type spoof detector wont let that happen. It will not allow a file having `image/jpeg` content type to be saved as `text/plain`. It checks only media type mismatch, for example `text` of `text/plain` and `image` of `image/jpeg`. So it will not prevent `image/jpeg` from saving as `image/png` as both have the same `image` media type.
 
-**note**: Media type spoof detection is integrated in the content type validator. This means without content type validation spoof detection wont be enabled.
+**note**: Media type spoof detection is integrated in the [content type validator](#file-content-type-validator). This means without content type validation spoof detection wont be enabled.
 
 ## i18n Translations
 
