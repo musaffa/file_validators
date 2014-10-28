@@ -24,7 +24,9 @@ module FileValidators
       private
 
       def has_extension?
-        File.extname(@file_name).present?
+        # the following code replaced File.extname(@file_name).present? because it cannot
+        # return the extension of a file named '.html', '.jpg' etc
+        @file_name.split('.').length > 1
       end
 
       def media_type_mismatch?
