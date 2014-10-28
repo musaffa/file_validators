@@ -36,5 +36,6 @@ module FileValidators
         end.strip
       end
     end
+
   end
 end

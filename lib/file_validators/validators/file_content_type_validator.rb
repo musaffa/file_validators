@@ -1,4 +1,5 @@
 require 'file_validators/utils/content_type_detector'
+require 'file_validators/utils/media_type_spoof_detector'
 
 module ActiveModel
   module Validations
@@ -12,10 +13,13 @@ module ActiveModel
 
       def validate_each(record, attribute, value)
         unless value.blank?
-          content_type = detect_content_type(value.path)
+          file_path = get_file_path(value)
+          file_name = get_file_name(value)
+          content_type = detect_content_type(file_path)
           allowed_types = option_content_types(record, :allow)
           forbidden_types = option_content_types(record, :exclude)
 
+          validate_media_type(record, attribute, content_type, file_name)
           validate_whitelist(record, attribute, content_type, allowed_types)
           validate_blacklist(record, attribute, content_type, forbidden_types)
         end
@@ -35,12 +39,40 @@ module ActiveModel
 
       private
 
+      def get_attr(value, attr)
+        if value.try(attr)
+          value.send(attr)
+        else value.try(:file).try(attr)
+          value.file.send(attr)
+        end
+      end
+
+      def get_file_path(value)
+        file_path = get_attr(value, :path)
+        file_path ? file_path : (raise ArgumentError, 'value or value.file must return file path in order to validate file content type')
+      end
+
+      def get_file_name(value)
+        file_name = get_attr(value, :original_filename)
+        file_name ? file_name : File.basename(get_file_path(value))
+      end
+
+      def detect_content_type(file_path)
+        FileValidators::Utils::ContentTypeDetector.new(file_path).detect
+      end
+
       def option_content_types(record, key)
         [option_value(record, key)].flatten.compact
       end
 
       def option_value(record, key)
         options[key].is_a?(Proc) ? options[key].call(record) : options[key]
+      end
+
+      def validate_media_type(record, attribute, content_type, file_name)
+        if FileValidators::Utils::MediaTypeSpoofDetector.new(content_type, file_name).spoofed?
+          record.errors.add attribute, :spoofed_file_media_type
+        end
       end
 
       def validate_whitelist(record, attribute, content_type, allowed_types)
@@ -57,10 +89,6 @@ module ActiveModel
 
       def mark_invalid(record, attribute, error, option_types)
         record.errors.add attribute, error, options.merge(types: option_types.join(', '))
-      end
-
-      def detect_content_type(file_path)
-        FileValidators::Utils::ContentTypeDetector.new(file_path).detect
       end
     end
 
