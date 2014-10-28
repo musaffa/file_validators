@@ -49,6 +49,7 @@ module ActiveModel
 
       def get_file_path(value)
         file_path = get_attr(value, :path)
+        # don't allow nil for file_path
         file_path ? file_path : (raise ArgumentError, 'value or value.file must return file path in order to validate file content type')
       end
 
