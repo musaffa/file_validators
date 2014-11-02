@@ -165,7 +165,7 @@ a part of the EXIF header of a valid JPEG file. Content type validator will iden
 as `image/jpeg` and, without spoof detection, it may pass the validation and be saved as .html document
 thus exposing your application to a security vulnerability. Media type spoof detector wont let that happen. It will not allow a file having `image/jpeg` content type to be saved as `text/plain`. It checks only media type mismatch, for example `text` of `text/plain` and `image` of `image/jpeg`. So it will not prevent `image/jpeg` from saving as `image/png` as both have the same `image` media type.
 
-**note**: Media type spoof detection is integrated in the [content type validator](#file-content-type-validator). This means without content type validation spoof detection wont be enabled.
+**note**: Media type spoof detection is integrated in the [content type validator](#file-content-type-validator). This means that without content type validation spoof detection wont be enabled.
 
 ## i18n Translations
 
@@ -210,6 +210,13 @@ en:
           gb: "GB"
           tb: "TB"
 ```
+
+## Issues
+
+**Carrierwave** - You are adding file validators to a model, then you are recommended to keep extension_white_list &/
+extension_black_list in the uploaders (in case you don't have, add that method).
+As of this writing (see [issue](https://github.com/carrierwaveuploader/carrierwave/issues/361)), Carrierwave
+uploaders start processing a file immediately after its assignment (even before the validators are called).
 
 ## Tests
 
