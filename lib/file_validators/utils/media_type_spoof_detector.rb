@@ -25,7 +25,7 @@ module FileValidators
 
       def has_extension?
         # the following code replaced File.extname(@file_name).present? because it cannot
-        # return the extension of a file named '.html', '.jpg' etc
+        # return the extension of a extension-only file names, e.g. '.html', '.jpg' etc
         @file_name.split('.').length > 1
       end
 
