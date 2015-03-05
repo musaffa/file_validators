@@ -1,0 +1,11 @@
+ja:
+  errors:
+    messages:
+      file_size_is_in: ! 'のファイルサイズは%{min}から%{max}までの間である必要があります。'
+      file_size_is_less_than: ! 'のファイルサイズは%{count}未満である必要があります。'
+      file_size_is_less_than_or_equal_to: ! 'のファイルサイズは%{count}以下である必要があります。'
+      file_size_is_greater_than: ! 'のファイルサイズは%{count}より大きい必要があります。'
+      file_size_is_greater_than_or_equal_to: ! 'のファイルサイズは%{count}以上である必要があります。'
+      spoofed_file_media_type: の内容と拡張子が一致していません。
+      allowed_file_content_types: ! 'は%{types}のどれかである必要があります。'
+      excluded_file_content_types: ! 'に%{types}は使用できません。'
