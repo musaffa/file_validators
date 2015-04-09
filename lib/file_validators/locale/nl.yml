@@ -1,0 +1,13 @@
+nl:
+  errors:
+    messages:
+      file_size_is_in: ! 'bestandsgrootte moet tussen %{min} en %{max} zijn'
+      file_size_is_less_than: ! 'bestand moet kleiner dan %{count} zijn'
+      file_size_is_less_than_or_equal_to: ! 'bestand moet kleiner of gelijk zijn aan %{count}'
+      file_size_is_greater_than: ! 'bestand moet groter zijn dan %{count}'
+      file_size_is_greater_than_or_equal_to: ! 'bestand moet groter of gelijk zijn aan %{count}'
+
+      spoofed_file_media_type: bestand heeft een extensie welke niet overeenkomt met de inhoud
+      allowed_file_content_types: ! 'bestandsformaat moet een van de volgende formaten zijn: %{types}'
+      excluded_file_content_types: ! 'bestandsformaat kan niet een van de volgende formaten zijn: %{types}'
+
