@@ -355,12 +355,12 @@ describe 'File Content Type integration with ActiveModel' do
     subject { Person.new }
 
     context 'for invalid content type' do
-      before { subject.avatar = { "filename":"img140910_88338.GIF", "content_type":"image/gif", "size":13150 } }
+      before { subject.avatar = { "filename" => "img140910_88338.GIF", "content_type" => "image/gif", "size" => 13150 } }
       it { is_expected.not_to be_valid }
     end
 
     context 'for valid content type' do
-      before { subject.avatar = { "filename":"img140910_88338.jpg", "content_type":"image/jpeg", "size":13150 } }
+      before { subject.avatar = { "filename" => "img140910_88338.jpg", "content_type" => "image/jpeg", "size" => 13150 } }
       it { is_expected.to be_valid }
     end
   end

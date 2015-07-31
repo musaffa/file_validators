@@ -239,12 +239,12 @@ describe 'File Size Validator integration with ActiveModel' do
     subject { Person.new }
 
     context 'when file size is less than the specified size' do
-      before { subject.avatar = { "filename":"img140910_88338.GIF", "content_type":"image/gif", "size":13150 } }
+      before { subject.avatar = { "filename" => "img140910_88338.GIF", "content_type" => "image/gif", "size" => 13150 } }
       it { is_expected.not_to be_valid }
     end
 
     context 'when file size within the specified size' do
-      before { subject.avatar = { "filename":"img140910_88338.GIF", "content_type":"image/gif", "size":33150 } }
+      before { subject.avatar = { "filename" => "img140910_88338.GIF", "content_type" => "image/gif", "size" => 33150 } }
       it { is_expected.to be_valid }
     end
   end
