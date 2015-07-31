@@ -4,6 +4,7 @@ rvm:
   - 2.0.0
   - 1.9.3
 gemfile:
+  - gemfiles/activemodel_4.2.gemfile
   - gemfiles/activemodel_4.1.gemfile
   - gemfiles/activemodel_4.0.gemfile
   - gemfiles/activemodel_3.2.gemfile
