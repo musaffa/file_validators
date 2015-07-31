@@ -15,7 +15,7 @@ Any module that uses ActiveModel, for example ActiveRecord, can use these file v
 * ActiveModel versions: 3 and 4.
 * Rails versions: 3 and 4.
 
-It has been tested to work with Carrierwave, Paperclip, Dragonfly etc file uploading solutions.
+It has been tested to work with Carrierwave, Paperclip, Dragonfly, Refile etc file uploading solutions.
 Validations works both before and after uploads.
 
 ## Installation
@@ -135,11 +135,16 @@ validates :attachment, file_content_type: { allow: [/^image\/.*/, 'video/mp4'] }
 # proc/lambda example
 validates :video, file_content_type: { allow: lambda { |record| record.content_types } }
 ```
-* `exclude`: Forbidden content types. Can be a single content type or an array.  Each type can be a String or a Regexp. It also accepts `proc`. See `:allow` options examples.
-* `mode`: `:relaxed` or `:strict`. `:strict` mode detects media type spoofing (see more in [security](#security)), while `:relaxed` doesn't. `:relaxed` is default.
+* `exclude`: Forbidden content types. Can be a single content type or an array. Each type
+can be a String or a Regexp. It also accepts `proc`. See `:allow` options examples.
+* `mode`: `:strict` or `:relaxed`. `:strict` mode can detect content type based on the contents
+of the files. It also detects media type spoofing (see more in [security](#security)).
+`:relaxed` mode uses file name to detect the content type using `mime-types` gem.
+If mode option is not set then the validator uses form supplied content type.
 ```ruby
 # string
 validates :avatar, file_content_type: { allow: 'image/jpeg', mode: :strict }
+validates :avatar, file_content_type: { allow: 'image/jpeg', mode: :relaxed }
 ```
 * `message`: The message to display when the uploaded file has an invalid content type.
 You will get `types` as a replacement. You can write error messages without using any replacement.
@@ -168,9 +173,14 @@ than the extension. This prevents fake content types inserted in the request hea
 It also prevents file media type spoofing. For example, user may upload a .html document as 
 a part of the EXIF header of a valid JPEG file. Content type validator will identify its content type
 as `image/jpeg` and, without spoof detection, it may pass the validation and be saved as .html document
-thus exposing your application to a security vulnerability. Media type spoof detector wont let that happen. It will not allow a file having `image/jpeg` content type to be saved as `text/plain`. It checks only media type mismatch, for example `text` of `text/plain` and `image` of `image/jpeg`. So it will not prevent `image/jpeg` from saving as `image/png` as both have the same `image` media type.
+thus exposing your application to a security vulnerability. Media type spoof detector wont let that happen.
+It will not allow a file having `image/jpeg` content type to be saved as `text/plain`. It checks only media
+type mismatch, for example `text` of `text/plain` and `image` of `image/jpeg`. So it will not prevent
+`image/jpeg` from saving as `image/png` as both have the same `image` media type.
 
-**note**: This security feature is disabled by default. To enable it, first add `cocaine` gem in your Gemfile and then add `mode: :strict` option in [content type validations](#file-content-type-validator). 
+**note**: This security feature is disabled by default. To enable it, first add `cocaine` gem in
+your Gemfile and then add `mode: :strict` option in [content type validations](#file-content-type-validator).
+`:strict` mode may not work in direct file uploading systems as the file is not passed along with the form.
 
 ## i18n Translations
 
@@ -214,6 +224,21 @@ en:
           mb: "MB"
           gb: "GB"
           tb: "TB"
+```
+
+## Further Instructions
+
+If you are using `:strict` or `:relaxed` mode, for content types which are not supported
+by mime-types gem, you need to register those content types. For example, you can register
+`.docx` in the initializer:
+```Ruby
+# config/initializers/mime_types.rb
+Mime::Type.register "application/vnd.openxmlformats-officedocument.wordprocessingml.document", :docx
+```
+
+If you want to see what content type `:strict` mode returns, run this command in the shell:
+```Shell
+$ file -b --mime-type your-file.xxx
 ```
 
 ## Issues

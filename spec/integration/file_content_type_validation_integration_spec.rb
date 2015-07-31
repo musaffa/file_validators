@@ -322,4 +322,46 @@ describe 'File Content Type integration with ActiveModel' do
       end
     end
   end
+
+  context 'image data as json string' do
+    before :all do
+      Person.class_eval do
+        Person.reset_callbacks(:validate)
+        validates :avatar, file_content_type: { allow: 'image/jpeg' }
+      end
+    end
+
+    subject { Person.new }
+
+    context 'for invalid content type' do
+      before { subject.avatar = "{\"filename\":\"img140910_88338.GIF\",\"content_type\":\"image/gif\",\"size\":13150}" }
+      it { is_expected.not_to be_valid }
+    end
+
+    context 'for valid content type' do
+      before { subject.avatar = "{\"filename\":\"img140910_88338.jpg\",\"content_type\":\"image/jpeg\",\"size\":13150}" }
+      it { is_expected.to be_valid }
+    end
+  end
+
+  context 'image data as hash' do
+    before :all do
+      Person.class_eval do
+        Person.reset_callbacks(:validate)
+        validates :avatar, file_content_type: { allow: 'image/jpeg' }
+      end
+    end
+
+    subject { Person.new }
+
+    context 'for invalid content type' do
+      before { subject.avatar = { "filename":"img140910_88338.GIF", "content_type":"image/gif", "size":13150 } }
+      it { is_expected.not_to be_valid }
+    end
+
+    context 'for valid content type' do
+      before { subject.avatar = { "filename":"img140910_88338.jpg", "content_type":"image/jpeg", "size":13150 } }
+      it { is_expected.to be_valid }
+    end
+  end
 end

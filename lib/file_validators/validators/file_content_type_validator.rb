@@ -13,14 +13,12 @@ module ActiveModel
 
       def validate_each(record, attribute, value)
         unless value.blank?
-          file_path = get_file_path(value)
-          file_name = get_file_name(value)
-          mode = option_value(record, :mode) || :relaxed
-          content_type = detect_content_type(file_path, file_name, mode)
+          mode = option_value(record, :mode)
+          content_type = get_content_type(value, mode)
           allowed_types = option_content_types(record, :allow)
           forbidden_types = option_content_types(record, :exclude)
 
-          validate_media_type(record, attribute, content_type, file_name) if mode == :strict
+          validate_media_type(record, attribute, content_type, get_file_name(value)) if mode == :strict
           validate_whitelist(record, attribute, content_type, allowed_types)
           validate_blacklist(record, attribute, content_type, forbidden_types)
         end
@@ -56,11 +54,18 @@ module ActiveModel
         end
       end
 
-      def detect_content_type(file_path, file_name, mode)
-        if mode == :strict
+      def get_content_type(value, mode)
+        case mode
+        when :strict
+          file_path = get_file_path(value)
           FileValidators::Utils::ContentTypeDetector.new(file_path).detect
-        elsif mode == :relaxed
+        when :relaxed
+          file_name = get_file_name(value)
           MIME::Types.type_for(file_name).first
+        else
+          value = JSON.parse(value) if value.is_a?(String)
+          value = OpenStruct.new(value) if value.is_a?(Hash)
+          value.content_type
         end
       end
 
@@ -108,12 +113,12 @@ module ActiveModel
       # * +exclude+: Forbidden content types.
       # * +message+: The message to display when the uploaded file has an invalid
       #   content type.
-      # * +mode+: :relaxed or :strict.
-      #   :relaxed mode doesn't validate the content type based on the actual
-      #   contents of the files. It's only for sanity check.
+      # * +mode+: :strict or :relaxed.
       #   :strict mode validates the content type based on the actual contents
       #   of the files. Thus it can detect media type spoofing.
-      #   default value is :relaxed.
+      #   :relaxed validates the content type based on the file name using
+      #   the mime-types gem. It's only for sanity check.
+      #   If mode is not set then it uses form supplied content type.
       # * +if+: A lambda or name of an instance method. Validation will only
       #   be run is this lambda or method returns true.
       # * +unless+: Same as +if+ but validates if lambda or method returns false.

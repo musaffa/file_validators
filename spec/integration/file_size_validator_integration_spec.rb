@@ -206,4 +206,46 @@ describe 'File Size Validator integration with ActiveModel' do
       it { is_expected.to be_valid }
     end
   end
+
+  context 'image data as json string' do
+    before :all do
+      Person.class_eval do
+        Person.reset_callbacks(:validate)
+        validates :avatar, file_size: { greater_than: 20.kilobytes }
+      end
+    end
+
+    subject { Person.new }
+
+    context 'when file size is less than the specified size' do
+      before { subject.avatar = "{\"filename\":\"img140910_88338.GIF\",\"content_type\":\"image/gif\",\"size\":13150}" }
+      it { is_expected.not_to be_valid }
+    end
+
+    context 'when file size within the specified size' do
+      before { subject.avatar = "{\"filename\":\"img140910_88338.GIF\",\"content_type\":\"image/gif\",\"size\":33150}" }
+      it { is_expected.to be_valid }
+    end
+  end
+
+  context 'image data as hash' do
+    before :all do
+      Person.class_eval do
+        Person.reset_callbacks(:validate)
+        validates :avatar, file_size: { greater_than: 20.kilobytes }
+      end
+    end
+
+    subject { Person.new }
+
+    context 'when file size is less than the specified size' do
+      before { subject.avatar = { "filename":"img140910_88338.GIF", "content_type":"image/gif", "size":13150 } }
+      it { is_expected.not_to be_valid }
+    end
+
+    context 'when file size within the specified size' do
+      before { subject.avatar = { "filename":"img140910_88338.GIF", "content_type":"image/gif", "size":33150 } }
+      it { is_expected.to be_valid }
+    end
+  end
 end
