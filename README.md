@@ -136,7 +136,11 @@ validates :attachment, file_content_type: { allow: [/^image\/.*/, 'video/mp4'] }
 validates :video, file_content_type: { allow: lambda { |record| record.content_types } }
 ```
 * `exclude`: Forbidden content types. Can be a single content type or an array.  Each type can be a String or a Regexp. It also accepts `proc`. See `:allow` options examples.
-* `mode`: `:strict` or `:relaxed`. `:strict` mode detects media type spoofing (see more in [security](#security)), while `:relaxed` doesn't.
+* `mode`: `:relaxed` or `:strict`. `:strict` mode detects media type spoofing (see more in [security](#security)), while `:relaxed` doesn't. `:relaxed` is default.
+```ruby
+# string
+validates :avatar, file_content_type: { allow: 'image/jpeg', mode: :strict }
+```
 * `message`: The message to display when the uploaded file has an invalid content type.
 You will get `types` as a replacement. You can write error messages without using any replacement.
 ```ruby
@@ -158,7 +162,7 @@ validates :avatar, file_content_type: { allow: /^image\/.*/, exclude: ['image/pn
 
 ## Security
 
-This gem uses file command to get the content type based on the content of the file rather
+This gem can use Unix file command to get the content type based on the content of the file rather
 than the extension. This prevents fake content types inserted in the request header.
 
 It also prevents file media type spoofing. For example, user may upload a .html document as 
@@ -166,7 +170,7 @@ a part of the EXIF header of a valid JPEG file. Content type validator will iden
 as `image/jpeg` and, without spoof detection, it may pass the validation and be saved as .html document
 thus exposing your application to a security vulnerability. Media type spoof detector wont let that happen. It will not allow a file having `image/jpeg` content type to be saved as `text/plain`. It checks only media type mismatch, for example `text` of `text/plain` and `image` of `image/jpeg`. So it will not prevent `image/jpeg` from saving as `image/png` as both have the same `image` media type.
 
-**note**: Media type spoof detection is enabled by default in the [content type validator](#file-content-type-validator). You can disable it with `mode: :relaxed`.
+**note**: This security feature is disabled by default. To enable it, first add `cocaine` gem in your Gemfile and then add `mode: :strict` option in [content type validations](#file-content-type-validator). 
 
 ## i18n Translations
 

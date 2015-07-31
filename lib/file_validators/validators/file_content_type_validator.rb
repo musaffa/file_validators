@@ -15,7 +15,7 @@ module ActiveModel
         unless value.blank?
           file_path = get_file_path(value)
           file_name = get_file_name(value)
-          mode = option_value(record, :mode) || :strict
+          mode = option_value(record, :mode) || :relaxed
           content_type = detect_content_type(file_path, file_name, mode)
           allowed_types = option_content_types(record, :allow)
           forbidden_types = option_content_types(record, :exclude)
@@ -109,11 +109,11 @@ module ActiveModel
       # * +message+: The message to display when the uploaded file has an invalid
       #   content type.
       # * +mode+: :relaxed or :strict.
-      #   :strict mode validates the content type based on the actual contents
-      #   of the files. Thus it can detect media type spoofing.
       #   :relaxed mode doesn't validate the content type based on the actual
       #   contents of the files. It's only for sanity check.
-      #   default value is :strict.
+      #   :strict mode validates the content type based on the actual contents
+      #   of the files. Thus it can detect media type spoofing.
+      #   default value is :relaxed.
       # * +if+: A lambda or name of an instance method. Validation will only
       #   be run is this lambda or method returns true.
       # * +unless+: Same as +if+ but validates if lambda or method returns false.

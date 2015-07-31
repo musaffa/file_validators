@@ -41,7 +41,7 @@ describe 'File Content Type integration with ActiveModel' do
       before :all do
         Person.class_eval do
           Person.reset_callbacks(:validate)
-          validates :avatar, file_content_type: { allow: /^image\/.*/ }
+          validates :avatar, file_content_type: { allow: /^image\/.*/, mode: :strict }
         end
       end
 
@@ -69,7 +69,7 @@ describe 'File Content Type integration with ActiveModel' do
       before :all do
         Person.class_eval do
           Person.reset_callbacks(:validate)
-          validates :avatar, file_content_type: { allow: ['image/jpeg', 'text/plain'] }
+          validates :avatar, file_content_type: { allow: ['image/jpeg', 'text/plain'], mode: :strict }
         end
       end
 
@@ -97,7 +97,8 @@ describe 'File Content Type integration with ActiveModel' do
       before :all do
         Person.class_eval do
           Person.reset_callbacks(:validate)
-          validates :avatar, file_content_type: { allow: lambda { |record| ['image/jpeg', 'text/plain'] } }
+          validates :avatar, file_content_type: { allow: lambda { |record| ['image/jpeg', 'text/plain'] },
+                                                  mode: :strict }
         end
       end
 
@@ -127,7 +128,7 @@ describe 'File Content Type integration with ActiveModel' do
       before :all do
         Person.class_eval do
           Person.reset_callbacks(:validate)
-          validates :avatar, file_content_type: { exclude: 'image/jpeg' }
+          validates :avatar, file_content_type: { exclude: 'image/jpeg', mode: :strict }
         end
       end
 
@@ -148,7 +149,7 @@ describe 'File Content Type integration with ActiveModel' do
       before :all do
         Person.class_eval do
           Person.reset_callbacks(:validate)
-          validates :avatar, file_content_type: { exclude: /^image\/.*/ }
+          validates :avatar, file_content_type: { exclude: /^image\/.*/, mode: :strict }
         end
       end
 
@@ -176,7 +177,7 @@ describe 'File Content Type integration with ActiveModel' do
       before :all do
         Person.class_eval do
           Person.reset_callbacks(:validate)
-          validates :avatar, file_content_type: { exclude: ['image/jpeg', 'text/plain'] }
+          validates :avatar, file_content_type: { exclude: ['image/jpeg', 'text/plain'], mode: :strict }
         end
       end
 
@@ -204,7 +205,7 @@ describe 'File Content Type integration with ActiveModel' do
       before :all do
         Person.class_eval do
           Person.reset_callbacks(:validate)
-          validates :avatar, file_content_type: { exclude: lambda { |record| /^image\/.*/ } }
+          validates :avatar, file_content_type: { exclude: lambda { |record| /^image\/.*/ }, mode: :strict }
         end
       end
 
@@ -228,7 +229,7 @@ describe 'File Content Type integration with ActiveModel' do
     before :all do
       Person.class_eval do
         Person.reset_callbacks(:validate)
-        validates :avatar, file_content_type: { allow: /^image\/.*/, exclude: 'image/png' }
+        validates :avatar, file_content_type: { allow: /^image\/.*/, exclude: 'image/png', mode: :strict }
       end
     end
 
@@ -316,7 +317,7 @@ describe 'File Content Type integration with ActiveModel' do
       context 'with spoofed file' do
         it 'invalidates the file' do
           subject.avatar = Rack::Test::UploadedFile.new(@spoofed_file_path, 'image/jpeg')
-          expect(subject).not_to be_valid
+          expect(subject).to be_valid
         end
       end
     end

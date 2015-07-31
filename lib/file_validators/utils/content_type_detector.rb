@@ -1,4 +1,7 @@
-require 'cocaine'
+begin
+  require 'cocaine'
+rescue LoadError
+end
 
 module FileValidators
   module Utils
@@ -30,6 +33,8 @@ module FileValidators
       def content_type_from_file_command
         type = begin
           Cocaine::CommandLine.new('file', '-b --mime-type :file').run(file: @file_path)
+        rescue NameError => e
+          puts "file_validators: Add 'cocaine' gem as you are using file content type validations in strict mode"
         rescue Cocaine::CommandLineError => e
           # TODO: log command failure
           DEFAULT_CONTENT_TYPE
