@@ -12,6 +12,7 @@ describe 'File Content Type integration with ActiveModel' do
     @chubby_bubble_path = File.join(File.dirname(__FILE__), '../fixtures/chubby_bubble.jpg')
     @chubby_cute_path = File.join(File.dirname(__FILE__), '../fixtures/chubby_cute.png')
     @sample_text_path = File.join(File.dirname(__FILE__), '../fixtures/sample.txt')
+    @spoofed_file_path = File.join(File.dirname(__FILE__), '../fixtures/spoofed.jpg')
   end
 
   context ':allow option' do
@@ -241,6 +242,83 @@ describe 'File Content Type integration with ActiveModel' do
     context 'with a disallowed type' do
       before { subject.avatar = Rack::Test::UploadedFile.new(@chubby_cute_path, 'image/png') }
       it { is_expected.not_to be_valid }
+    end
+  end
+
+  context ':mode option' do
+    context 'strict mode' do
+      before :all do
+        Person.class_eval do
+          Person.reset_callbacks(:validate)
+          validates :avatar, file_content_type: { allow: 'image/jpeg', mode: :strict }
+        end
+      end
+
+      subject { Person.new }
+
+      context 'with valid file' do
+        it 'validates the file' do
+          subject.avatar = Rack::Test::UploadedFile.new(@cute_path, 'image/jpeg')
+          expect(subject).to be_valid
+        end
+      end
+
+      context 'with spoofed file' do
+        it 'invalidates the file' do
+          subject.avatar = Rack::Test::UploadedFile.new(@spoofed_file_path, 'image/jpeg')
+          expect(subject).not_to be_valid
+        end
+      end
+    end
+
+    context 'relaxed mode' do
+      before :all do
+        Person.class_eval do
+          Person.reset_callbacks(:validate)
+          validates :avatar, file_content_type: { allow: 'image/jpeg', mode: :relaxed }
+        end
+      end
+
+      subject { Person.new }
+
+      context 'with valid file' do
+        it 'validates the file' do
+          subject.avatar = Rack::Test::UploadedFile.new(@cute_path, 'image/jpeg')
+          expect(subject).to be_valid
+        end
+      end
+
+      context 'with spoofed file' do
+        it 'validates the file' do
+          subject.avatar = Rack::Test::UploadedFile.new(@spoofed_file_path, 'image/jpeg')
+          expect(subject).to be_valid
+        end
+      end
+    end
+
+    context 'default mode' do
+      before :all do
+        Person.class_eval do
+          Person.reset_callbacks(:validate)
+          validates :avatar, file_content_type: { allow: 'image/jpeg' }
+        end
+      end
+
+      subject { Person.new }
+
+      context 'with valid file' do
+        it 'validates the file' do
+          subject.avatar = Rack::Test::UploadedFile.new(@cute_path, 'image/jpeg')
+          expect(subject).to be_valid
+        end
+      end
+
+      context 'with spoofed file' do
+        it 'invalidates the file' do
+          subject.avatar = Rack::Test::UploadedFile.new(@spoofed_file_path, 'image/jpeg')
+          expect(subject).not_to be_valid
+        end
+      end
     end
   end
 end

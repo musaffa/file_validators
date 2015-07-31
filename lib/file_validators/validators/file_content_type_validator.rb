@@ -15,11 +15,12 @@ module ActiveModel
         unless value.blank?
           file_path = get_file_path(value)
           file_name = get_file_name(value)
-          content_type = detect_content_type(file_path)
+          mode = option_value(record, :mode) || :strict
+          content_type = detect_content_type(file_path, file_name, mode)
           allowed_types = option_content_types(record, :allow)
           forbidden_types = option_content_types(record, :exclude)
 
-          validate_media_type(record, attribute, content_type, file_name)
+          validate_media_type(record, attribute, content_type, file_name) if mode == :strict
           validate_whitelist(record, attribute, content_type, allowed_types)
           validate_blacklist(record, attribute, content_type, forbidden_types)
         end
@@ -55,8 +56,12 @@ module ActiveModel
         end
       end
 
-      def detect_content_type(file_path)
-        FileValidators::Utils::ContentTypeDetector.new(file_path).detect
+      def detect_content_type(file_path, file_name, mode)
+        if mode == :strict
+          FileValidators::Utils::ContentTypeDetector.new(file_path).detect
+        elsif mode == :relaxed
+          MIME::Types.type_for(file_name).first
+        end
       end
 
       def option_content_types(record, key)
@@ -103,6 +108,12 @@ module ActiveModel
       # * +exclude+: Forbidden content types.
       # * +message+: The message to display when the uploaded file has an invalid
       #   content type.
+      # * +mode+: :relaxed or :strict.
+      #   :strict mode validates the content type based on the actual contents
+      #   of the files. Thus it can detect media type spoofing.
+      #   :relaxed mode doesn't validate the content type based on the actual
+      #   contents of the files. It's only for sanity check.
+      #   default value is :strict.
       # * +if+: A lambda or name of an instance method. Validation will only
       #   be run is this lambda or method returns true.
       # * +unless+: Same as +if+ but validates if lambda or method returns false.
