@@ -142,7 +142,6 @@ of the files. It also detects media type spoofing (see more in [security](#secur
 `:relaxed` mode uses file name to detect the content type using `mime-types` gem.
 If mode option is not set then the validator uses form supplied content type.
 ```ruby
-# string
 validates :avatar, file_content_type: { allow: 'image/jpeg', mode: :strict }
 validates :avatar, file_content_type: { allow: 'image/jpeg', mode: :relaxed }
 ```
