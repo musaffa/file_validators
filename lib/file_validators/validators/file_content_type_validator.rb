@@ -12,6 +12,7 @@ module ActiveModel
       end
 
       def validate_each(record, attribute, value)
+        value = JSON.parse(value) if value.is_a?(String)
         unless value.blank?
           mode = option_value(record, :mode)
           content_type = get_content_type(value, mode)
@@ -63,7 +64,6 @@ module ActiveModel
           file_name = get_file_name(value)
           MIME::Types.type_for(file_name).first
         else
-          value = JSON.parse(value) if value.is_a?(String)
           value = OpenStruct.new(value) if value.is_a?(Hash)
           value.content_type
         end

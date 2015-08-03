@@ -342,6 +342,11 @@ describe 'File Content Type integration with ActiveModel' do
       before { subject.avatar = "{\"filename\":\"img140910_88338.jpg\",\"content_type\":\"image/jpeg\",\"size\":13150}" }
       it { is_expected.to be_valid }
     end
+
+    context 'empty json string' do
+      before { subject.avatar = "{}" }
+      it { is_expected.to be_valid }
+    end
   end
 
   context 'image data as hash' do
@@ -361,6 +366,11 @@ describe 'File Content Type integration with ActiveModel' do
 
     context 'for valid content type' do
       before { subject.avatar = { "filename" => "img140910_88338.jpg", "content_type" => "image/jpeg", "size" => 13150 } }
+      it { is_expected.to be_valid }
+    end
+
+    context 'empty hash' do
+      before { subject.avatar = {} }
       it { is_expected.to be_valid }
     end
   end

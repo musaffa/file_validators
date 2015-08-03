@@ -226,6 +226,11 @@ describe 'File Size Validator integration with ActiveModel' do
       before { subject.avatar = "{\"filename\":\"img140910_88338.GIF\",\"content_type\":\"image/gif\",\"size\":33150}" }
       it { is_expected.to be_valid }
     end
+
+    context 'empty json string' do
+      before { subject.avatar = "{}" }
+      it { is_expected.to be_valid }
+    end
   end
 
   context 'image data as hash' do
@@ -245,6 +250,11 @@ describe 'File Size Validator integration with ActiveModel' do
 
     context 'when file size within the specified size' do
       before { subject.avatar = { "filename" => "img140910_88338.GIF", "content_type" => "image/gif", "size" => 33150 } }
+      it { is_expected.to be_valid }
+    end
+
+    context 'empty hash' do
+      before { subject.avatar = {} }
       it { is_expected.to be_valid }
     end
   end
