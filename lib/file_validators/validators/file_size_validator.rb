@@ -13,7 +13,7 @@ module ActiveModel
       end
 
       def validate_each(record, attribute, value)
-        value = JSON.parse(value) if value.is_a?(String)
+        value = JSON.parse(value) if value.is_a?(String) && value.present?
         unless value.blank?
           options.slice(*CHECKS.keys).each do |option, option_value|
             value = OpenStruct.new(value) if value.is_a?(Hash)

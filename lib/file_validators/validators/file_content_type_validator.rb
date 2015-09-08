@@ -12,7 +12,7 @@ module ActiveModel
       end
 
       def validate_each(record, attribute, value)
-        value = JSON.parse(value) if value.is_a?(String)
+        value = JSON.parse(value) if value.is_a?(String) && value.present?
         unless value.blank?
           mode = option_value(record, :mode)
           content_type = get_content_type(value, mode)
