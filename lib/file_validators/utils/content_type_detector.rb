@@ -1,44 +1,85 @@
-begin
-  require 'cocaine'
-rescue LoadError
-end
-
 module FileValidators
   module Utils
 
     class ContentTypeDetector
-      EMPTY_CONTENT_TYPE = 'inode/x-empty'
-      DEFAULT_CONTENT_TYPE = 'application/octet-stream'
+      # The content-type detection strategy is as follows:
+      #
+      # 1. Blank/Empty files: If there's no filepath or the file is empty,
+      #    provide a sensible default (application/octet-stream or inode/x-empty)
+      #
+      # 2. Calculated match: Return the first result that is found by both the
+      #    `file` command and MIME::Types.
+      #
+      # 3. Standard types: Return the first standard (without an x- prefix) entry
+      #    in MIME::Types
+      #
+      # 4. Experimental types: If there were no standard types in MIME::Types
+      #    list, try to return the first experimental one
+      #
+      # 5. Raw `file` command: Just use the output of the `file` command raw, or
+      #    a sensible default. This is cached from Step 2.
 
-      def initialize(file_path)
-        @file_path = file_path
+      EMPTY_TYPE = "inode/x-empty"
+      SENSIBLE_DEFAULT = "application/octet-stream"
+
+      def initialize(filepath)
+        @filepath = filepath
       end
 
-      # content type detection strategy:
-      #
-      # 1. empty file: returns 'inode/x-empty'
-      # 2. nonempty file: if the file is not empty then returns the content type using file command
-      # 3. invalid file: file command raises error and returns 'application/octet-stream'
-
+      # Returns a String describing the file's content type
       def detect
-        empty_file? ? EMPTY_CONTENT_TYPE : content_type_from_file_command
+        if blank_name?
+          SENSIBLE_DEFAULT
+        elsif empty_file?
+          EMPTY_TYPE
+        elsif calculated_type_matches.any?
+          calculated_type_matches.first
+        else
+          type_from_file_contents || SENSIBLE_DEFAULT
+        end.to_s
       end
 
       private
 
       def empty_file?
-        File.exists?(@file_path) && File.size(@file_path) == 0
+        File.exist?(@filepath) && File.size(@filepath) == 0
       end
 
-      def content_type_from_file_command
-        type = begin
-          Cocaine::CommandLine.new('file', '-b --mime-type :file').run(file: @file_path)
-        rescue NameError => e
-          puts "file_validators: Add 'cocaine' gem as you are using file content type validations in strict mode"
-        rescue Cocaine::CommandLineError => e
-          # TODO: log command failure
-          DEFAULT_CONTENT_TYPE
-        end.strip
+      alias :empty? :empty_file?
+
+      def blank_name?
+        @filepath.nil? || @filepath.try(:empty?)
+      end
+
+      def file_exists?
+        File.exist?(@filepath)
+      end
+
+      def calculated_type_matches
+        possible_types.select do |content_type|
+          content_type == type_from_file_contents
+        end
+      end
+
+      def possible_types
+        MIME::Types.type_for(@filepath).collect(&:content_type)
+      end
+
+      def type_from_file_contents
+        type_from_mime_magic || type_from_file_command
+      rescue Errno::ENOENT => e
+        Paperclip.log("Error while determining content type: #{e}")
+        SENSIBLE_DEFAULT
+      end
+
+      def type_from_mime_magic
+        @type_from_mime_magic ||=
+          MimeMagic.by_magic(File.open(@filepath)).try(:type) if file_exists?
+      end
+
+      def type_from_file_command
+        @type_from_file_command ||=
+          FileCommandContentTypeDetector.new(@filepath).detect
       end
     end
 
