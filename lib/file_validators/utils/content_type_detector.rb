@@ -48,7 +48,7 @@ module FileValidators
       alias :empty? :empty_file?
 
       def blank_name?
-        @filepath.nil? || @filepath.try(:empty?)
+        @filepath.nil? || @filepath.empty?
       end
 
       def file_exists?
