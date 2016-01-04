@@ -41,7 +41,7 @@ module ActiveModel
       private
 
       def get_file_path(value)
-        temp_object = value.try(:tempfile) || Paperclip.io_adapters.for(value)
+        temp_object = value.try(:tempfile)
 
         if temp_object.respond_to?(:path)
           temp_object.path
