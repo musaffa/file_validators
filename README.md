@@ -249,10 +249,14 @@ uploaders start processing a file immediately after its assignment (even before 
 
 ## Tests
 
-```ruby
-rake
-rake test:unit
-rake test:integration
+```Shell
+$ rake
+$ rake test:unit
+$ rake test:integration
+
+# test different active model versions
+$ appraisal install
+$ appraisal rake
 ```
 
 ## Problems
