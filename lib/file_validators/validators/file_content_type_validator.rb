@@ -1,5 +1,6 @@
 require 'file_validators/utils/content_type_detector'
 require 'file_validators/utils/media_type_spoof_detector'
+require 'file_validators/utils/file_command_content_type_detector'
 
 module ActiveModel
   module Validations
@@ -40,8 +41,10 @@ module ActiveModel
       private
 
       def get_file_path(value)
-        if value.try(:path)
-          value.path
+        temp_object = value.try(:tempfile) || Paperclip.io_adapters.for(value)
+
+        if temp_object.respond_to?(:path)
+          temp_object.path
         else
           raise ArgumentError, 'value must return a file path in order to validate file content type'
         end

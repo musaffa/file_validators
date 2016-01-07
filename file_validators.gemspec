@@ -17,10 +17,17 @@ Gem::Specification.new do |s|
   s.test_files    = s.files.grep(%r{^spec/})
   s.require_paths  = ['lib']
 
-  s.add_dependency 'activemodel', '>= 3.0'
-  s.add_dependency 'mime-types', '>= 1.0'
+  # ruby < 2.0 only supports mime-types <= 2.6.2
+  if RUBY_VERSION < '2.0'
+    s.add_dependency 'mime-types', [ '>= 2.6.2', '< 3' ]
+  else
+    s.add_dependency 'mime-types', '>= 1.0'
+  end
 
-  s.add_development_dependency 'cocaine', '~> 0.5.4'
+  s.add_dependency 'activemodel', '>= 3.0'
+  s.add_dependency('mimemagic', '0.3.0')
+  s.add_dependency('cocaine', '~> 0.5.5')
+
   s.add_development_dependency 'rake'
   s.add_development_dependency 'rspec', '~> 3.1.0'
   s.add_development_dependency 'coveralls'
