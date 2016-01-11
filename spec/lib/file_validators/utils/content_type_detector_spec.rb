@@ -4,7 +4,7 @@ require 'tempfile'
 describe FileValidators::Utils::ContentTypeDetector do
   it 'returns the empty content type when the file is empty' do
     tempfile = Tempfile.new('empty')
-    expect(FileValidators::Utils::ContentTypeDetector.new(tempfile).detect).to eql('inode/x-empty')
+    expect(FileValidators::Utils::ContentTypeDetector.new(tempfile.path).detect).to eql('inode/x-empty')
     tempfile.close
   end
 
