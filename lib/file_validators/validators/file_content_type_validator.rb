@@ -41,13 +41,25 @@ module ActiveModel
       private
 
       def get_file_path(value)
-        temp_object = value.try(:tempfile)
+        temp_object = get_tempfile_from(value) || (get_paperclip_adaptor_for(value) if paperclip_defined)
 
         if temp_object.respond_to?(:path)
           temp_object.path
         else
           raise ArgumentError, 'value must return a file path in order to validate file content type'
         end
+      end
+
+      def paperclip_defined
+        defined? Paperclip
+      end
+
+      def get_tempfile_from(value)
+        value.try(:tempfile)
+      end
+
+      def get_paperclip_adaptor_for(value)
+        Paperclip.io_adapters.for(value)
       end
 
       def get_file_name(value)
