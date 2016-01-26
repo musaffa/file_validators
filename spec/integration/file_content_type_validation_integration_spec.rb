@@ -323,6 +323,31 @@ describe 'File Content Type integration with ActiveModel' do
     end
   end
 
+  context 'Paperclip defined and tempfile not working' do
+   let(:avatar) { Rack::Test::UploadedFile.new(@cute_path, 'image/jpeg') }
+   let(:paperclip) { double 'Paperclip'}
+
+    before :all do
+      Person.class_eval do
+        Person.reset_callbacks(:validate)
+        validates :avatar, file_content_type: { allow: /^image\/.*/, mode: :strict }
+      end
+    end
+
+    subject { Person.new }
+
+    context 'with valid file' do
+      it 'validates the file' do
+        stub_const('Paperclip', paperclip)
+        tempfile = avatar.tempfile
+        expect(avatar).to receive(:tempfile).and_return(nil)
+        expect(paperclip).to receive_message_chain('io_adapters.for').and_return(tempfile)
+        subject.avatar = avatar
+        expect(subject).to be_valid
+      end
+    end
+  end
+
   context 'image data as json string' do
     before :all do
       Person.class_eval do
