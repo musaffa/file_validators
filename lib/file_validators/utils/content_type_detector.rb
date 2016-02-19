@@ -22,8 +22,9 @@ module FileValidators
       EMPTY_TYPE = "inode/x-empty"
       SENSIBLE_DEFAULT = "application/octet-stream"
 
-      def initialize(filepath)
+      def initialize(filepath, content_type=nil)
         @filepath = filepath
+        @content_type = content_type
       end
 
       # Returns a String describing the file's content type
@@ -39,7 +40,38 @@ module FileValidators
         end.to_s
       end
 
+      # media type spoof detection strategy:
+      #
+      # 1. it will not identify as spoofed if file name doesn't have any extension
+      # 2. it will identify as spoofed if any of the file extension's media types
+      # matches the media type of the content type. So it will return true for
+      # `text` of `text/plain` mismatch with `image` of `image/jpeg`, but return false
+      # for `image` of `image/png` match with `image` of `image/jpeg`.
+
+      def spoofed?
+        has_extension? and media_type_mismatch?
+      end
+
       private
+
+      def has_extension?
+        # the following code replaced File.extname(@file_name).present? because it cannot
+        # return the extension of a extension-only file names, e.g. '.html', '.jpg' etc
+        File.extname(@filepath).split('.').length > 1 || no_base_name_file_with_extension
+      end
+
+      def no_base_name_file_with_extension
+        filepath_last = @filepath.split('/').last
+        filepath_last.first == '.' && filepath_last.length > 1
+      end
+
+      def media_type_mismatch?
+        possible_types.none? { |type| type.include? detected_media_type }
+      end
+
+      def detected_media_type
+        @content_type.split('/').first || ''
+      end
 
       def empty_file?
         File.exist?(@filepath) && File.size(@filepath) == 0

@@ -1,5 +1,4 @@
 require 'file_validators/utils/content_type_detector'
-require 'file_validators/utils/media_type_spoof_detector'
 require 'file_validators/utils/file_command_content_type_detector'
 
 module ActiveModel
@@ -93,7 +92,7 @@ module ActiveModel
       end
 
       def validate_media_type(record, attribute, content_type, file_name)
-        if FileValidators::Utils::MediaTypeSpoofDetector.new(content_type, file_name).spoofed?
+        if FileValidators::Utils::ContentTypeDetector.new(content_type, file_name).spoofed?
           record.errors.add attribute, :spoofed_file_media_type
         end
       end
