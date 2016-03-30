@@ -7,7 +7,5 @@ en:
       file_size_is_greater_than: ! 'file size must be greater than %{count}'
       file_size_is_greater_than_or_equal_to: ! 'file size must be greater than or equal to %{count}'
 
-      spoofed_file_media_type: file has an extension that does not match its contents
       allowed_file_content_types: ! 'file should be one of %{types}'
       excluded_file_content_types: ! 'file cannot be %{types}'
-

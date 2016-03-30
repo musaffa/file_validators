@@ -1,5 +1,4 @@
 require 'file_validators/utils/content_type_detector'
-require 'file_validators/utils/media_type_spoof_detector'
 
 module ActiveModel
   module Validations
@@ -19,7 +18,6 @@ module ActiveModel
           allowed_types = option_content_types(record, :allow)
           forbidden_types = option_content_types(record, :exclude)
 
-          validate_media_type(record, attribute, content_type, get_file_name(value)) if mode == :strict
           validate_whitelist(record, attribute, content_type, allowed_types)
           validate_blacklist(record, attribute, content_type, forbidden_types)
         end
@@ -59,7 +57,8 @@ module ActiveModel
         case mode
         when :strict
           file_path = get_file_path(value)
-          FileValidators::Utils::ContentTypeDetector.new(file_path).detect
+          file_name = get_file_name(value)
+          FileValidators::Utils::ContentTypeDetector.new(file_path, file_name).detect
         when :relaxed
           file_name = get_file_name(value)
           MIME::Types.type_for(file_name).first
@@ -75,12 +74,6 @@ module ActiveModel
 
       def option_value(record, key)
         options[key].is_a?(Proc) ? options[key].call(record) : options[key]
-      end
-
-      def validate_media_type(record, attribute, content_type, file_name)
-        if FileValidators::Utils::MediaTypeSpoofDetector.new(content_type, file_name).spoofed?
-          record.errors.add attribute, :spoofed_file_media_type
-        end
       end
 
       def validate_whitelist(record, attribute, content_type, allowed_types)

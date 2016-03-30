@@ -191,8 +191,6 @@ File Size Errors
 * `file_size_is_greater_than_or_equal_to`: takes `count` as replacement
 
 Content Type Errors
-* `spoofed_file_media_type`: generated when file media type from its extension doesn't match the media type of its
-content. learn more from [security](#Security).
 * `allowed_file_content_types`: generated when you have specified allowed types but the content type
 of the file doesn't match. takes `types` as replacement.
 * `excluded_file_content_types`: generated when you have specified excluded types and the content type

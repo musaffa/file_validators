@@ -1,3 +1,6 @@
+require 'logger'
+require_relative './media_type_spoof_detector'
+
 begin
   require 'cocaine'
 rescue LoadError
@@ -10,8 +13,11 @@ module FileValidators
       EMPTY_CONTENT_TYPE = 'inode/x-empty'
       DEFAULT_CONTENT_TYPE = 'application/octet-stream'
 
-      def initialize(file_path)
+      attr_accessor :file_path, :file_name
+
+      def initialize(file_path, file_name)
         @file_path = file_path
+        @file_name = file_name
       end
 
       # content type detection strategy:
@@ -21,24 +27,38 @@ module FileValidators
       # 3. invalid file: file command raises error and returns 'application/octet-stream'
 
       def detect
-        empty_file? ? EMPTY_CONTENT_TYPE : content_type_from_file_command
+        empty_file? ? EMPTY_CONTENT_TYPE : content_type_from_content
       end
 
       private
 
       def empty_file?
-        File.exists?(@file_path) && File.size(@file_path) == 0
+        File.exists?(file_path) && File.size(file_path) == 0
       end
 
-      def content_type_from_file_command
-        type = begin
-          Cocaine::CommandLine.new('file', '-b --mime-type :file').run(file: @file_path)
+      def content_type_from_content
+        content_type = type_from_file_command
+
+        if FileValidators::Utils::MediaTypeSpoofDetector.new(content_type, file_name).spoofed?
+          logger.warn('A file with a spoofed media type has been detected by the file validators.')
+        else
+          content_type
+        end
+      end
+
+      def type_from_file_command
+        begin
+          Cocaine::CommandLine.new('file', '-b --mime-type :file').run(file: @file_path).strip
         rescue NameError => e
-          puts "file_validators: Add 'cocaine' gem as you are using file content type validations in strict mode"
+          logger.debug("file_validators: Add 'cocaine' gem as you are using file content type validations in strict mode")
         rescue Cocaine::CommandLineError => e
-          # TODO: log command failure
+          logger.info(e.message)
           DEFAULT_CONTENT_TYPE
-        end.strip
+        end
+      end
+
+      def logger
+        Logger.new(STDOUT)
       end
     end
 
