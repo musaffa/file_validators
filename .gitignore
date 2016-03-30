@@ -10,3 +10,4 @@ Gemfile.lock
 gemfiles/*.lock
 coverage/
 /.idea
+.ruby-version
