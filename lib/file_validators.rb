@@ -1,6 +1,4 @@
 require 'active_model'
-require 'mimemagic'
-require 'mimemagic/overlay'
 require 'file_validators/validators/file_size_validator'
 require 'file_validators/validators/file_content_type_validator'
 
