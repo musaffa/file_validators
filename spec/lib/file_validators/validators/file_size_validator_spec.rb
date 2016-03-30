@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'file_validators/validators/file_size_validator'
 
 describe ActiveModel::Validations::FileSizeValidator do
   class Dummy
@@ -21,7 +20,7 @@ describe ActiveModel::Validations::FileSizeValidator do
   subject { Dummy }
 
   def build_validator(options)
-    @validator = ActiveModel::Validations::FileSizeValidator.new(options.merge(attributes: :avatar))
+    @validator = described_class.new(options.merge(attributes: :avatar))
   end
 
   context 'with :in option' do
@@ -174,7 +173,7 @@ describe ActiveModel::Validations::FileSizeValidator do
     before { Dummy.validates_file_size :avatar, in: (5.kilobytes..10.kilobytes) }
 
     it 'adds the validator to the class' do
-      expect(Dummy.validators_on(:avatar)).to include(ActiveModel::Validations::FileSizeValidator)
+      expect(Dummy.validators_on(:avatar)).to include(described_class)
     end
   end
 
@@ -183,7 +182,7 @@ describe ActiveModel::Validations::FileSizeValidator do
       expect { build_validator message: 'Some message' }.to raise_error(ArgumentError)
     end
 
-    (ActiveModel::Validations::FileSizeValidator::CHECKS.keys - [:in]).each do |argument|
+    (described_class::CHECKS.keys - [:in]).each do |argument|
       it "does not raise argument error if :#{argument} is numeric or a proc" do
         expect { build_validator argument => 5.kilobytes }.not_to raise_error
         expect { build_validator argument => lambda { |record| 5.kilobytes } }.not_to raise_error

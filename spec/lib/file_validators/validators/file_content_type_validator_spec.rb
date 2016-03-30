@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'file_validators/validators/file_content_type_validator'
 
 describe ActiveModel::Validations::FileContentTypeValidator do
   class Dummy
@@ -9,7 +8,7 @@ describe ActiveModel::Validations::FileContentTypeValidator do
   subject { Dummy }
 
   def build_validator(options)
-    @validator = ActiveModel::Validations::FileContentTypeValidator.new(options.merge(attributes: :avatar))
+    @validator = described_class.new(options.merge(attributes: :avatar))
   end
 
   context 'whitelist format' do
@@ -138,7 +137,7 @@ describe ActiveModel::Validations::FileContentTypeValidator do
     before { Dummy.validates_file_content_type :avatar, allow: 'image/jpg' }
 
     it 'adds the validator to the class' do
-      expect(Dummy.validators_on(:avatar)).to include(ActiveModel::Validations::FileContentTypeValidator)
+      expect(Dummy.validators_on(:avatar)).to include(described_class)
     end
   end
 
@@ -147,7 +146,7 @@ describe ActiveModel::Validations::FileContentTypeValidator do
       expect { build_validator message: 'Some message' }.to raise_error(ArgumentError)
     end
 
-    ActiveModel::Validations::FileContentTypeValidator::CHECKS.each do |argument|
+    described_class::CHECKS.each do |argument|
       it "does not raise error if :#{argument} is string, array, regexp or a proc" do
         expect { build_validator argument => 'image/jpg' }.not_to raise_error
         expect { build_validator argument => ['image/jpg'] }.not_to raise_error

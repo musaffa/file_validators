@@ -2,7 +2,7 @@ ENV['RAILS_ENV'] ||= 'test'
 
 require 'active_support'
 require 'active_support/core_ext'
-require_relative '../lib/file_validators'
+require 'file_validators'
 require 'rspec'
 require 'coveralls'
 
