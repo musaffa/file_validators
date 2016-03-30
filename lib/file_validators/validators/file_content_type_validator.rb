@@ -1,5 +1,3 @@
-require 'file_validators/utils/content_type_detector'
-
 module ActiveModel
   module Validations
 

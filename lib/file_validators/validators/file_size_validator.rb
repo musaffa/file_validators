@@ -1,5 +1,3 @@
-require 'ostruct'
-
 module ActiveModel
   module Validations
 
