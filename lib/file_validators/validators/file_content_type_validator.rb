@@ -9,15 +9,17 @@ module ActiveModel
       end
 
       def validate_each(record, attribute, value)
-        value = JSON.parse(value) if value.is_a?(String) && value.present?
-        unless value.blank?
+        values = parse_values(value)
+        unless values.empty?
           mode = option_value(record, :mode)
-          content_type = get_content_type(value, mode)
           allowed_types = option_content_types(record, :allow)
           forbidden_types = option_content_types(record, :exclude)
 
-          validate_whitelist(record, attribute, content_type, allowed_types)
-          validate_blacklist(record, attribute, content_type, forbidden_types)
+          values.each do |value|
+            content_type = get_content_type(value, mode)
+            validate_whitelist(record, attribute, content_type, allowed_types)
+            validate_blacklist(record, attribute, content_type, forbidden_types)
+          end
         end
       end
 
@@ -34,6 +36,14 @@ module ActiveModel
       end
 
       private
+
+      def parse_values(value)
+        return [] unless value.present?
+
+        value = JSON.parse(value) if value.is_a?(String)
+
+        Array.wrap(value).reject { |value| value.blank? }
+      end
 
       def get_file_path(value)
         if value.try(:path)
@@ -87,7 +97,10 @@ module ActiveModel
       end
 
       def mark_invalid(record, attribute, error, option_types)
-        record.errors.add attribute, error, options.merge(types: option_types.join(', '))
+        error_options = options.merge(types: option_types.join(', '))
+        unless record.errors.added?(attribute, error, error_options)
+          record.errors.add attribute, error, error_options
+        end
       end
     end
 
