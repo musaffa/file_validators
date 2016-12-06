@@ -13,15 +13,14 @@ module ActiveModel
       end
 
       def validate_each(record, attribute, value)
-        value = JSON.parse(value) if value.is_a?(String) && value.present?
-        unless value.blank?
+        values = parse_values(value)
+        unless values.empty?
           options.slice(*CHECKS.keys).each do |option, option_value|
-            value = OpenStruct.new(value) if value.is_a?(Hash)
             option_value = option_value.call(record) if option_value.is_a?(Proc)
-            unless valid_size?(value.size, option, option_value)
+            if values.any? { |v| not valid_size?(v.size, option, option_value) }
               record.errors.add(attribute,
                                 "file_size_is_#{option}".to_sym,
-                                filtered_options(value).merge!(detect_error_options(option_value)))
+                                filtered_options(values).merge!(detect_error_options(option_value)))
             end
           end
         end
@@ -38,6 +37,17 @@ module ActiveModel
       end
 
       private
+
+      def parse_values(value)
+        return [] unless value.present?
+
+        value = JSON.parse(value) if value.is_a?(String)
+        return [] unless value.present?
+
+        value = OpenStruct.new(value) if value.is_a?(Hash)
+
+        Array.wrap(value).reject { |value| value.blank? }
+      end
 
       def check_options(klass, options)
         options.each do |option, value|

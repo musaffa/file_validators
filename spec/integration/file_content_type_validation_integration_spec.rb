@@ -379,4 +379,54 @@ describe 'File Content Type integration with ActiveModel' do
       it { is_expected.to be_valid }
     end
   end
+
+  context 'image data as array' do
+    before :all do
+      Person.class_eval do
+        Person.reset_callbacks(:validate)
+        validates :avatar, file_content_type: { allow: 'image/jpeg' }
+      end
+    end
+
+    subject { Person.new }
+
+    context 'for one invalid content type' do
+      before {
+        subject.avatar = [
+          Rack::Test::UploadedFile.new(@sample_text_path, 'text/plain'),
+          Rack::Test::UploadedFile.new(@cute_path, 'image/jpeg')
+        ]
+      }
+      it { is_expected.not_to be_valid }
+    end
+
+    context 'for two invalid content types' do
+      before {
+        subject.avatar = [
+          Rack::Test::UploadedFile.new(@sample_text_path, 'text/plain'),
+          Rack::Test::UploadedFile.new(@sample_text_path, 'text/plain')
+        ]
+      }
+
+      it 'is invalid and adds just one error' do
+        expect(subject).not_to be_valid
+        expect(subject.errors.count).to eq 1
+      end
+    end
+
+    context 'for valid content type' do
+      before {
+        subject.avatar = [
+          Rack::Test::UploadedFile.new(@cute_path, 'image/jpeg'),
+          Rack::Test::UploadedFile.new(@cute_path, 'image/jpeg')
+        ]
+      }
+      it { is_expected.to be_valid }
+    end
+
+    context 'empty array' do
+      before { subject.avatar = [] }
+      it { is_expected.to be_valid }
+    end
+  end
 end
