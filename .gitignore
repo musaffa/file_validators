@@ -11,3 +11,5 @@ gemfiles/*.lock
 coverage/
 /.idea
 .ruby-version
+.agignore
+tags

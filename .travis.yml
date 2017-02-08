@@ -7,12 +7,11 @@ rvm:
   - jruby-9.0.4.0
 
 gemfile:
+  - gemfiles/activemodel_5.0.gemfile
   - gemfiles/activemodel_4.2.gemfile
   - gemfiles/activemodel_4.1.gemfile
   - gemfiles/activemodel_4.0.gemfile
   - gemfiles/activemodel_3.2.gemfile
-  - gemfiles/activemodel_3.1.gemfile
-  - gemfiles/activemodel_3.0.gemfile
 
 matrix:
   allow_failures:

@@ -12,8 +12,11 @@ Any module that uses ActiveModel, for example ActiveRecord, can use these file v
 
 ## Support
 
-* ActiveModel versions: 3 and 4.
-* Rails versions: 3 and 4.
+* ActiveModel versions: 3.2, 4 and 5.
+* Rails versions: 3.2, 4 and 5.
+
+As of version `2.2`, activemodel 3.0 and 3.1 will no longer be supported.
+For activemodel 3.0 and 3.1, please use file_validators version `<= 2.1`.
 
 It has been tested to work with Carrierwave, Paperclip, Dragonfly, Refile etc file uploading solutions.
 Validations works both before and after uploads.
@@ -253,8 +256,8 @@ $ rake test:unit
 $ rake test:integration
 
 # test different active model versions
-$ appraisal install
-$ appraisal rake
+$ bundle exec appraisal install
+$ bundle exec appraisal rake
 ```
 
 ## Problems
