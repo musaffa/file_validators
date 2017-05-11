@@ -168,6 +168,12 @@ describe ActiveModel::Validations::FileSizeValidator do
     end
   end
 
+  context 'exceptional file size' do
+    before { build_validator less_than: 3.kilobytes }
+
+    it { is_expected.to allow_file_size(0, @validator) } # zero-byte file
+    it { is_expected.not_to allow_file_size(nil, @validator) }
+  end
 
   context 'using the helper' do
     before { Dummy.validates_file_size :avatar, in: (5.kilobytes..10.kilobytes) }
