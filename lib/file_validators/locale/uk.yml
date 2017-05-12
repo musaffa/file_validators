@@ -1,0 +1,12 @@
+uk:
+  errors:
+    messages:
+      file_size_is_in: ! 'розмір файлу має бути між %{min} і %{max}'
+      file_size_is_less_than: ! 'розмір файлу повинен бути меншим ніж %{count}'
+      file_size_is_less_than_or_equal_to: ! 'розмір файлу повинен бути меншим або дорівнювати %{count}'
+      file_size_is_greater_than: ! 'розмір файлу повинен бути більшим ніж %{count}'
+      file_size_is_greater_than_or_equal_to: ! 'розмір файлу повинен бути більшим або рівнятись %{count}'
+
+      allowed_file_content_types: ! 'допустимі типи файлу: %{types}'
+      excluded_file_content_types: ! 'недопустимі типи файлу %{types}'
+
