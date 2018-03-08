@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'activemodel', '>= 3.2'
   s.add_dependency 'mime-types', '>= 1.0'
 
-  s.add_development_dependency 'cocaine', '~> 0.5.4'
+  s.add_development_dependency 'ruby-filemagic', '>= 0.7.2'
   s.add_development_dependency 'rake'
   s.add_development_dependency 'rspec', '~> 3.5.0'
   s.add_development_dependency 'coveralls'

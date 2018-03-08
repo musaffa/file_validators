@@ -180,7 +180,7 @@ It will not allow a file having `image/jpeg` content type to be saved as `text/p
 type mismatch, for example `text` of `text/plain` and `image` of `image/jpeg`. So it will not prevent
 `image/jpeg` from saving as `image/png` as both have the same `image` media type.
 
-**note**: This security feature is disabled by default. To enable it, first add `cocaine` gem in
+**note**: This security feature is disabled by default. To enable it, first add `ruby-filemagic` gem in
 your Gemfile and then add `mode: :strict` option in [content type validations](#file-content-type-validator).
 `:strict` mode may not work in direct file uploading systems as the file is not passed along with the form.
 
