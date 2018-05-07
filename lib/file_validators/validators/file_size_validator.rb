@@ -17,7 +17,7 @@ module ActiveModel
         unless values.empty?
           options.slice(*CHECKS.keys).each do |option, option_value|
             option_value = option_value.call(record) if option_value.is_a?(Proc)
-            if values.any? { |v| not valid_size?(v.size, option, option_value) }
+            if values.any? { |v| not valid_size?(value_byte_size(v), option, option_value) }
               record.errors.add(attribute,
                                 "file_size_is_#{option}".to_sym,
                                 filtered_options(values).merge!(detect_error_options(option_value)))
@@ -54,6 +54,14 @@ module ActiveModel
           unless value.is_a?(klass) || value.is_a?(Proc)
             raise ArgumentError, ":#{option} must be a #{klass.name.to_s.downcase} or a proc"
           end
+        end
+      end
+
+      def value_byte_size(value)
+        if value.respond_to?(:byte_size)
+          value.byte_size
+        else
+          value.size
         end
       end
 
