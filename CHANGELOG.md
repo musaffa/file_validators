@@ -1,3 +1,8 @@
+# 2.3.0
+
+* [#19](https://github.com/musaffa/file_validators/pull/19) Return false with blank size
+* [#27](https://github.com/musaffa/file_validators/pull/27) Fix file size validator for ActiveStorage
+
 # 2.2.0-beta.1
 
 * [#17](https://github.com/musaffa/file_validators/pull/17) Now Supports multiple file uploads
