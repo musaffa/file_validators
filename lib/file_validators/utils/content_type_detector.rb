@@ -1,9 +1,9 @@
 require 'logger'
 
 begin
-  require 'cocaine'
+  require 'terrapin'
 rescue LoadError
-  puts "file_validators requires 'cocaine' gem as you are using file content type validations in strict mode"
+  puts "file_validators requires 'terrapin' gem as you are using file content type validations in strict mode"
 end
 
 module FileValidators
@@ -51,8 +51,8 @@ module FileValidators
 
       def type_from_file_command
         begin
-          Cocaine::CommandLine.new('file', '-b --mime-type :file').run(file: @file_path).strip
-        rescue Cocaine::CommandLineError => e
+          Terrapin::CommandLine.new('file', '-b --mime-type :file').run(file: @file_path).strip
+        rescue Terrapin::CommandLineError => e
           logger.info(e.message)
           DEFAULT_CONTENT_TYPE
         end
