@@ -39,7 +39,7 @@ class Profile
 
   attr_accessor :avatar
   validates :avatar, file_size: { less_than_or_equal_to: 100.kilobytes },
-                     file_content_type: { allow: ['image/jpeg', 'image/png'] } 
+                     file_content_type: { allow: ['image/jpeg', 'image/png'] }
 end
 ```
 ActiveRecord example:
@@ -67,23 +67,23 @@ validates :avatar, file_size: { less_than: 2.gigabytes }
 ```
 * `less_than_or_equal_to`: Less than or equal to a number in bytes or a proc that returns a number
 ```ruby
-validates :avatar, file_size: { less_than_or_equal_to: 50.bytes } 
+validates :avatar, file_size: { less_than_or_equal_to: 50.bytes }
 ```
 * `greater_than`: greater than a number in bytes or a proc that returns a number
 ```ruby
-validates :avatar, file_size: { greater_than: 1.byte } 
+validates :avatar, file_size: { greater_than: 1.byte }
 ```
 * `greater_than_or_equal_to`: Greater than or equal to a number in bytes or a proc that returns a number
 ```ruby
-validates :avatar, file_size: { greater_than_or_equal_to: 50.bytes } 
+validates :avatar, file_size: { greater_than_or_equal_to: 50.bytes }
 ```
-* `message`: Error message to display. With all the options above except `:in`, you will get `count` as a replacement. 
-With `:in` you will get `min` and `max` as replacements. 
+* `message`: Error message to display. With all the options above except `:in`, you will get `count` as a replacement.
+With `:in` you will get `min` and `max` as replacements.
 `count`, `min` and `max` each will have its value and unit together.
 You can write error messages without using any replacement.
 ```ruby
 validates :avatar, file_size: { less_than: 100.kilobytes,
-                                message: 'avatar should be less than %{count}' } 
+                                message: 'avatar should be less than %{count}' }
 ```
 ```ruby
 validates :document, file_size: { in: 1.kilobyte..1.megabyte,
@@ -172,7 +172,7 @@ validates :avatar, file_content_type: { allow: /^image\/.*/, exclude: ['image/pn
 This gem can use Unix file command to get the content type based on the content of the file rather
 than the extension. This prevents fake content types inserted in the request header.
 
-It also prevents file media type spoofing. For example, user may upload a .html document as 
+It also prevents file media type spoofing. For example, user may upload a .html document as
 a part of the EXIF header of a valid JPEG file. Content type validator will identify its content type
 as `image/jpeg` and, without spoof detection, it may pass the validation and be saved as .html document
 thus exposing your application to a security vulnerability. Media type spoof detector wont let that happen.
@@ -180,7 +180,7 @@ It will not allow a file having `image/jpeg` content type to be saved as `text/p
 type mismatch, for example `text` of `text/plain` and `image` of `image/jpeg`. So it will not prevent
 `image/jpeg` from saving as `image/png` as both have the same `image` media type.
 
-**note**: This security feature is disabled by default. To enable it, first add `cocaine` gem in
+**note**: This security feature is disabled by default. To enable it, first add `terrapin` gem in
 your Gemfile and then add `mode: :strict` option in [content type validations](#file-content-type-validator).
 `:strict` mode may not work in direct file uploading systems as the file is not passed along with the form.
 
