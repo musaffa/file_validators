@@ -208,4 +208,15 @@ describe ActiveModel::Validations::FileSizeValidator do
       expect { build_validator in: 5.kilobytes }.to raise_error(ArgumentError)
     end
   end
+
+  ##
+  # trying to call #size on an ActiveStorage attachment
+  # causes errors when it is not defined e.g.
+  # "Module::DelegationError: size delegated to attachment, but attachment is nil"
+  context 'on ActiveStorage attachment' do
+    before { build_validator greater_than: 5.kilobytes }
+
+    it { is_expected.not_to allow_file_size_on_nil_activesupport_file(6.kilobytes, @validator,
+                                          message: "Avatar file size must be greater than #{@storage_units[5120]}") }
+  end
 end
