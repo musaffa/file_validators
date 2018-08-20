@@ -23,3 +23,7 @@ end
 appraise 'activemodel-5.0' do
   gem 'activemodel', '5.0.1'
 end
+
+appraise 'activemodel-5.2' do
+  gem 'activemodel', '5.2.1'
+end

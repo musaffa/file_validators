@@ -8,18 +8,32 @@ rvm:
   - jruby-9.1.7.0
 
 gemfile:
+  - gemfiles/activemodel_5.2.gemfile
   - gemfiles/activemodel_5.0.gemfile
   - gemfiles/activemodel_4.2.gemfile
-  - gemfiles/activemodel_4.1.gemfile
   - gemfiles/activemodel_4.0.gemfile
   - gemfiles/activemodel_3.2.gemfile
 
 matrix:
   exclude:
-  - rvm: 2.0
-    gemfile: gemfiles/activemodel_5.0.gemfile
+  - rvm: 2.5
+    gemfile: gemfiles/activemodel_3.2.gemfile
+  - rvm: 2.5
+    gemfile: gemfiles/activemodel_4.0.gemfile
+  - rvm: 2.5
+    gemfile: gemfiles/activemodel_4.2.gemfile
+
+  - rvm: ruby-head
+    gemfile: gemfiles/activemodel_3.2.gemfile
+  - rvm: ruby-head
+    gemfile: gemfiles/activemodel_4.0.gemfile
+  - rvm: ruby-head
+    gemfile: gemfiles/activemodel_4.2.gemfile
+
   - rvm: jruby-9.0.4.0
     gemfile: gemfiles/activemodel_5.0.gemfile
+  - rvm: jruby-9.0.4.0
+    gemfile: gemfiles/activemodel_5.2.gemfile
 
   allow_failures:
   - rvm: ruby-head
