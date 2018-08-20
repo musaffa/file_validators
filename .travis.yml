@@ -16,11 +16,11 @@ gemfile:
 
 matrix:
   exclude:
-  - rvm: 2.5
+  - rvm: 2.5.0
     gemfile: gemfiles/activemodel_3.2.gemfile
-  - rvm: 2.5
+  - rvm: 2.5.0
     gemfile: gemfiles/activemodel_4.0.gemfile
-  - rvm: 2.5
+  - rvm: 2.5.0
     gemfile: gemfiles/activemodel_4.2.gemfile
 
   - rvm: ruby-head
