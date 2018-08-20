@@ -1,3 +1,8 @@
+# 3.0.0.beta1
+
+* [#29](https://github.com/musaffa/file_validators/pull/29) Upgrade cocaine to terrapin
+* Rubocop style guide
+
 # 2.3.0
 
 * [#19](https://github.com/musaffa/file_validators/pull/19) Return false with blank size
