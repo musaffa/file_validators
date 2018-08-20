@@ -1,8 +1,9 @@
+# frozen_string_literal: true
+
 module ActiveModel
   module Validations
-
     class FileContentTypeValidator < ActiveModel::EachValidator
-      CHECKS = [:allow, :exclude].freeze
+      CHECKS = %i[allow exclude].freeze
 
       def self.helper_method_name
         :validates_file_content_type
@@ -10,16 +11,16 @@ module ActiveModel
 
       def validate_each(record, attribute, value)
         values = parse_values(value)
-        unless values.empty?
-          mode = option_value(record, :mode)
-          allowed_types = option_content_types(record, :allow)
-          forbidden_types = option_content_types(record, :exclude)
+        return if values.empty?
 
-          values.each do |value|
-            content_type = get_content_type(value, mode)
-            validate_whitelist(record, attribute, content_type, allowed_types)
-            validate_blacklist(record, attribute, content_type, forbidden_types)
-          end
+        mode = option_value(record, :mode)
+        allowed_types = option_content_types(record, :allow)
+        forbidden_types = option_content_types(record, :exclude)
+
+        values.each do |val|
+          content_type = get_content_type(val, mode)
+          validate_whitelist(record, attribute, content_type, allowed_types)
+          validate_blacklist(record, attribute, content_type, forbidden_types)
         end
       end
 
@@ -42,7 +43,7 @@ module ActiveModel
 
         value = JSON.parse(value) if value.is_a?(String)
 
-        Array.wrap(value).reject { |value| value.blank? }
+        Array.wrap(value).reject(&:blank?)
       end
 
       def get_file_path(value)
@@ -85,7 +86,7 @@ module ActiveModel
       end
 
       def validate_whitelist(record, attribute, content_type, allowed_types)
-        if allowed_types.present? and allowed_types.none? { |type| type === content_type }
+        if allowed_types.present? && allowed_types.none? { |type| type === content_type }
           mark_invalid record, attribute, :allowed_file_content_types, allowed_types
         end
       end
@@ -130,6 +131,5 @@ module ActiveModel
         validates_with FileContentTypeValidator, _merge_attributes(attr_names)
       end
     end
-
   end
 end

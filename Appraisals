@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 appraise 'activemodel-3.2' do
   gem 'activemodel', '3.2.22.5'
   gem 'rack', '1.6.5'

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec::Matchers.define :allow_file_content_type do |content_type, validator, message|
   match do |model|
     value = double('file', path: content_type, original_filename: content_type)

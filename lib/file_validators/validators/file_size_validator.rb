@@ -1,6 +1,7 @@
+# frozen_string_literal: true
+
 module ActiveModel
   module Validations
-
     class FileSizeValidator < ActiveModel::EachValidator
       CHECKS = { in: :===,
                  less_than: :<,
@@ -14,22 +15,18 @@ module ActiveModel
 
       def validate_each(record, attribute, value)
         values = parse_values(value)
-        unless values.empty?
-          options.slice(*CHECKS.keys).each do |option, option_value|
-            option_value = option_value.call(record) if option_value.is_a?(Proc)
-            if values.any? { |v| not valid_size?(value_byte_size(v), option, option_value) }
-              record.errors.add(attribute,
-                                "file_size_is_#{option}".to_sym,
-                                filtered_options(values).merge!(detect_error_options(option_value)))
-            end
-          end
+        return if values.empty?
+
+        options.slice(*CHECKS.keys).each do |option, option_value|
+          check_errors(record, attribute, values, option, option_value)
         end
       end
 
       def check_validity!
         unless (CHECKS.keys & options.keys).present?
-          raise ArgumentError, 'You must at least pass in one of these options - :in, :less_than,
-                                :less_than_or_equal_to, :greater_than and :greater_than_or_equal_to'
+          raise ArgumentError, 'You must at least pass in one of these options' \
+                               ' - :in, :less_than, :less_than_or_equal_to,' \
+                               ' :greater_than and :greater_than_or_equal_to'
         end
 
         check_options(Numeric, options.slice(*(CHECKS.keys - [:in])))
@@ -46,7 +43,7 @@ module ActiveModel
 
         value = OpenStruct.new(value) if value.is_a?(Hash)
 
-        Array.wrap(value).reject { |value| value.blank? }
+        Array.wrap(value).reject(&:blank?)
       end
 
       def check_options(klass, options)
@@ -54,6 +51,18 @@ module ActiveModel
           unless value.is_a?(klass) || value.is_a?(Proc)
             raise ArgumentError, ":#{option} must be a #{klass.name.to_s.downcase} or a proc"
           end
+        end
+      end
+
+      def check_errors(record, attribute, values, option, option_value)
+        option_value = option_value.call(record) if option_value.is_a?(Proc)
+        has_invalid_size = values.any? { |v| !valid_size?(value_byte_size(v), option, option_value) }
+        if has_invalid_size
+          record.errors.add(
+            attribute,
+            "file_size_is_#{option}".to_sym,
+            filtered_options(values).merge!(detect_error_options(option_value))
+          )
         end
       end
 
@@ -82,7 +91,7 @@ module ActiveModel
 
       def detect_error_options(option_value)
         if option_value.is_a?(Range)
-          { min: human_size(option_value.min), max: human_size(option_value.max)  }
+          { min: human_size(option_value.min), max: human_size(option_value.max) }
         else
           { count: human_size(option_value) }
         end
@@ -92,12 +101,22 @@ module ActiveModel
         if defined?(ActiveSupport::NumberHelper) # Rails 4.0+
           ActiveSupport::NumberHelper.number_to_human_size(size)
         else
-          storage_units_format = I18n.translate(:'number.human.storage_units.format', :locale => options[:locale], :raise => true)
-          unit = I18n.translate(:'number.human.storage_units.units.byte', :locale => options[:locale], :count => size.to_i, :raise => true)
+          storage_units_format = I18n.translate(
+            :'number.human.storage_units.format',
+            locale: options[:locale],
+            raise: true
+          )
+
+          unit = I18n.translate(
+            :'number.human.storage_units.units.byte',
+            locale: options[:locale],
+            count: size.to_i,
+            raise: true
+          )
+
           storage_units_format.gsub(/%n/, size.to_i.to_s).gsub(/%u/, unit).html_safe
         end
       end
-
     end
 
     module HelperMethods
@@ -116,6 +135,5 @@ module ActiveModel
         validates_with FileSizeValidator, _merge_attributes(attr_names)
       end
     end
-
   end
 end

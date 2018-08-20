@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 require 'rack/test/uploaded_file'
 
@@ -52,7 +54,7 @@ describe 'Combined File Validators integration with ActiveModel' do
     before :all do
       Person.class_eval do
         Person.reset_callbacks(:validate)
-        validates_file_size :avatar, { less_than: 20.kilobytes }
+        validates_file_size :avatar, less_than: 20.kilobytes
         validates_file_content_type :avatar, allow: 'image/jpeg'
       end
     end

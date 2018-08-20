@@ -1,8 +1,9 @@
+# frozen_string_literal: true
+
 require 'mime/types'
 
 module FileValidators
   module Utils
-
     class MediaTypeSpoofDetector
       def initialize(content_type, file_name)
         @content_type = content_type
@@ -18,12 +19,12 @@ module FileValidators
       # for `image` of `image/png` match with `image` of `image/jpeg`.
 
       def spoofed?
-        has_extension? and media_type_mismatch?
+        extension? && media_type_mismatch?
       end
 
       private
 
-      def has_extension?
+      def extension?
         # the following code replaced File.extname(@file_name).present? because it cannot
         # return the extension of a extension-only file names, e.g. '.html', '.jpg' etc
         @file_name.split('.').length > 1
@@ -41,6 +42,5 @@ module FileValidators
         @content_type.split('/').first
       end
     end
-
   end
 end

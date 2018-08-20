@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 require 'rack/test/uploaded_file'
 
@@ -44,7 +46,7 @@ describe 'File Size Validator integration with ActiveModel' do
       before :all do
         Person.class_eval do
           Person.reset_callbacks(:validate)
-          validates :avatar, file_size: { in: lambda { |record| 20.kilobytes..40.kilobytes } }
+          validates :avatar, file_size: { in: ->(_record) { 20.kilobytes..40.kilobytes } }
         end
       end
 
@@ -99,8 +101,8 @@ describe 'File Size Validator integration with ActiveModel' do
       before :all do
         Person.class_eval do
           Person.reset_callbacks(:validate)
-          validates :avatar, file_size: { greater_than: lambda { |record| 20.kilobytes },
-                                          less_than:    lambda { |record| 40.kilobytes } }
+          validates :avatar, file_size: { greater_than: ->(_record) { 20.kilobytes },
+                                          less_than:    ->(_record) { 40.kilobytes } }
         end
       end
 
@@ -218,22 +220,28 @@ describe 'File Size Validator integration with ActiveModel' do
     subject { Person.new }
 
     context 'when file size is less than the specified size' do
-      before { subject.avatar = "{\"filename\":\"img140910_88338.GIF\",\"content_type\":\"image/gif\",\"size\":13150}" }
+      before do
+        subject.avatar = '{"filename":"img140910_88338.GIF","content_type":"image/gif","size":13150}'
+      end
+
       it { is_expected.not_to be_valid }
     end
 
     context 'when file size within the specified size' do
-      before { subject.avatar = "{\"filename\":\"img140910_88338.GIF\",\"content_type\":\"image/gif\",\"size\":33150}" }
+      before do
+        subject.avatar = '{"filename":"img140910_88338.GIF","content_type":"image/gif","size":33150}'
+      end
+
       it { is_expected.to be_valid }
     end
 
     context 'empty json string' do
-      before { subject.avatar = "{}" }
+      before { subject.avatar = '{}' }
       it { is_expected.to be_valid }
     end
 
     context 'empty json string' do
-      before { subject.avatar = "" }
+      before { subject.avatar = '' }
       it { is_expected.to be_valid }
     end
   end
@@ -249,12 +257,26 @@ describe 'File Size Validator integration with ActiveModel' do
     subject { Person.new }
 
     context 'when file size is less than the specified size' do
-      before { subject.avatar = { "filename" => "img140910_88338.GIF", "content_type" => "image/gif", "size" => 13150 } }
+      before do
+        subject.avatar = {
+          'filename' => 'img140910_88338.GIF',
+          'content_type' => 'image/gif',
+          'size' => 13_150
+        }
+      end
+
       it { is_expected.not_to be_valid }
     end
 
     context 'when file size within the specified size' do
-      before { subject.avatar = { "filename" => "img140910_88338.GIF", "content_type" => "image/gif", "size" => 33150 } }
+      before do
+        subject.avatar = {
+          'filename' => 'img140910_88338.GIF',
+          'content_type' => 'image/gif',
+          'size' => 33_150
+        }
+      end
+
       it { is_expected.to be_valid }
     end
 
@@ -275,22 +297,22 @@ describe 'File Size Validator integration with ActiveModel' do
     subject { Person.new }
 
     context 'when size of one file is less than the specified size' do
-      before {
+      before do
         subject.avatar = [
           Rack::Test::UploadedFile.new(@cute_path),
           Rack::Test::UploadedFile.new(@chubby_bubble_path)
         ]
-      }
+      end
       it { is_expected.not_to be_valid }
     end
 
     context 'when size of all files is within the specified size' do
-      before {
+      before do
         subject.avatar = [
           Rack::Test::UploadedFile.new(@cute_path),
           Rack::Test::UploadedFile.new(@cute_path)
         ]
-      }
+      end
 
       it 'is invalid and adds just one error' do
         expect(subject).not_to be_valid
@@ -299,12 +321,12 @@ describe 'File Size Validator integration with ActiveModel' do
     end
 
     context 'when size of all files is less than the specified size' do
-      before {
+      before do
         subject.avatar = [
           Rack::Test::UploadedFile.new(@chubby_bubble_path),
           Rack::Test::UploadedFile.new(@chubby_bubble_path)
         ]
-      }
+      end
 
       it { is_expected.to be_valid }
     end

@@ -1,14 +1,16 @@
+# frozen_string_literal: true
+
 require 'logger'
 
 begin
   require 'terrapin'
 rescue LoadError
-  puts "file_validators requires 'terrapin' gem as you are using file content type validations in strict mode"
+  puts "file_validators requires 'terrapin' gem as you are using" \
+       ' file content type validations in strict mode'
 end
 
 module FileValidators
   module Utils
-
     class ContentTypeDetector
       EMPTY_CONTENT_TYPE = 'inode/x-empty'
       DEFAULT_CONTENT_TYPE = 'application/octet-stream'
@@ -50,18 +52,15 @@ module FileValidators
       end
 
       def type_from_file_command
-        begin
-          Terrapin::CommandLine.new('file', '-b --mime-type :file').run(file: @file_path).strip
-        rescue Terrapin::CommandLineError => e
-          logger.info(e.message)
-          DEFAULT_CONTENT_TYPE
-        end
+        Terrapin::CommandLine.new('file', '-b --mime-type :file').run(file: @file_path).strip
+      rescue Terrapin::CommandLineError => e
+        logger.info(e.message)
+        DEFAULT_CONTENT_TYPE
       end
 
       def logger
         Logger.new(STDOUT)
       end
     end
-
   end
 end

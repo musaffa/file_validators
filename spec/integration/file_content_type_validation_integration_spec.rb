@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 require 'rack/test/uploaded_file'
 
@@ -69,7 +71,8 @@ describe 'File Content Type integration with ActiveModel' do
       before :all do
         Person.class_eval do
           Person.reset_callbacks(:validate)
-          validates :avatar, file_content_type: { allow: ['image/jpeg', 'text/plain'], mode: :strict }
+          validates :avatar, file_content_type: { allow: ['image/jpeg', 'text/plain'],
+                                                  mode: :strict }
         end
       end
 
@@ -97,7 +100,7 @@ describe 'File Content Type integration with ActiveModel' do
       before :all do
         Person.class_eval do
           Person.reset_callbacks(:validate)
-          validates :avatar, file_content_type: { allow: lambda { |record| ['image/jpeg', 'text/plain'] },
+          validates :avatar, file_content_type: { allow: ->(_record) { ['image/jpeg', 'text/plain'] },
                                                   mode: :strict }
         end
       end
@@ -177,7 +180,8 @@ describe 'File Content Type integration with ActiveModel' do
       before :all do
         Person.class_eval do
           Person.reset_callbacks(:validate)
-          validates :avatar, file_content_type: { exclude: ['image/jpeg', 'text/plain'], mode: :strict }
+          validates :avatar, file_content_type: { exclude: ['image/jpeg', 'text/plain'],
+                                                  mode: :strict }
         end
       end
 
@@ -205,7 +209,8 @@ describe 'File Content Type integration with ActiveModel' do
       before :all do
         Person.class_eval do
           Person.reset_callbacks(:validate)
-          validates :avatar, file_content_type: { exclude: lambda { |record| /^image\/.*/ }, mode: :strict }
+          validates :avatar, file_content_type: { exclude: ->(_record) { /^image\/.*/ },
+                                                  mode: :strict }
         end
       end
 
@@ -229,7 +234,8 @@ describe 'File Content Type integration with ActiveModel' do
     before :all do
       Person.class_eval do
         Person.reset_callbacks(:validate)
-        validates :avatar, file_content_type: { allow: /^image\/.*/, exclude: 'image/png', mode: :strict }
+        validates :avatar, file_content_type: { allow: /^image\/.*/, exclude: 'image/png',
+                                                mode: :strict }
       end
     end
 
@@ -334,22 +340,28 @@ describe 'File Content Type integration with ActiveModel' do
     subject { Person.new }
 
     context 'for invalid content type' do
-      before { subject.avatar = "{\"filename\":\"img140910_88338.GIF\",\"content_type\":\"image/gif\",\"size\":13150}" }
+      before do
+        subject.avatar = '{"filename":"img140910_88338.GIF","content_type":"image/gif","size":13150}'
+      end
+
       it { is_expected.not_to be_valid }
     end
 
     context 'for valid content type' do
-      before { subject.avatar = "{\"filename\":\"img140910_88338.jpg\",\"content_type\":\"image/jpeg\",\"size\":13150}" }
+      before do
+        subject.avatar = '{"filename":"img140910_88338.jpg","content_type":"image/jpeg","size":13150}'
+      end
+
       it { is_expected.to be_valid }
     end
 
     context 'empty json string' do
-      before { subject.avatar = "{}" }
+      before { subject.avatar = '{}' }
       it { is_expected.to be_valid }
     end
 
     context 'empty string' do
-      before { subject.avatar = "" }
+      before { subject.avatar = '' }
       it { is_expected.to be_valid }
     end
   end
@@ -365,12 +377,26 @@ describe 'File Content Type integration with ActiveModel' do
     subject { Person.new }
 
     context 'for invalid content type' do
-      before { subject.avatar = { "filename" => "img140910_88338.GIF", "content_type" => "image/gif", "size" => 13150 } }
+      before do
+        subject.avatar = {
+          'filename' => 'img140910_88338.GIF',
+          'content_type' => 'image/gif',
+          'size' => 13_150
+        }
+      end
+
       it { is_expected.not_to be_valid }
     end
 
     context 'for valid content type' do
-      before { subject.avatar = { "filename" => "img140910_88338.jpg", "content_type" => "image/jpeg", "size" => 13150 } }
+      before do
+        subject.avatar = {
+          'filename' => 'img140910_88338.jpg',
+          'content_type' => 'image/jpeg',
+          'size' => 13_150
+        }
+      end
+
       it { is_expected.to be_valid }
     end
 
@@ -391,22 +417,22 @@ describe 'File Content Type integration with ActiveModel' do
     subject { Person.new }
 
     context 'for one invalid content type' do
-      before {
+      before do
         subject.avatar = [
           Rack::Test::UploadedFile.new(@sample_text_path, 'text/plain'),
           Rack::Test::UploadedFile.new(@cute_path, 'image/jpeg')
         ]
-      }
+      end
       it { is_expected.not_to be_valid }
     end
 
     context 'for two invalid content types' do
-      before {
+      before do
         subject.avatar = [
           Rack::Test::UploadedFile.new(@sample_text_path, 'text/plain'),
           Rack::Test::UploadedFile.new(@sample_text_path, 'text/plain')
         ]
-      }
+      end
 
       it 'is invalid and adds just one error' do
         expect(subject).not_to be_valid
@@ -415,12 +441,12 @@ describe 'File Content Type integration with ActiveModel' do
     end
 
     context 'for valid content type' do
-      before {
+      before do
         subject.avatar = [
           Rack::Test::UploadedFile.new(@cute_path, 'image/jpeg'),
           Rack::Test::UploadedFile.new(@cute_path, 'image/jpeg')
         ]
-      }
+      end
       it { is_expected.to be_valid }
     end
 

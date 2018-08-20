@@ -254,6 +254,7 @@ uploaders start processing a file immediately after its assignment (even before 
 $ rake
 $ rake test:unit
 $ rake test:integration
+$ rubocop
 
 # test different active model versions
 $ bundle exec appraisal install

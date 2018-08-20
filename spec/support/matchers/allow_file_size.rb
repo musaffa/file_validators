@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec::Matchers.define :allow_file_size do |size, validator, message|
   match do |model|
     value = double('file', size: size)

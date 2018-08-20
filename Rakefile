@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 begin
   require 'bundler/setup'
 rescue LoadError
@@ -16,7 +18,7 @@ namespace :test do
   end
 end
 
-task :default => ['test:unit', 'test:integration']
+task default: ['test:unit', 'test:integration']
 
 # require 'rdoc/task'
 
