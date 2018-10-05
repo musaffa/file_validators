@@ -27,5 +27,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rake'
   s.add_development_dependency 'rspec', '~> 3.5.0'
   s.add_development_dependency 'rubocop', '~> 0.58.2'
-  s.add_development_dependency 'terrapin', '~> 0.6'
+  s.add_development_dependency 'marcel', '~> 0.3'
 end
