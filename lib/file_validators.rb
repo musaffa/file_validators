@@ -5,6 +5,7 @@ require 'ostruct'
 
 module FileValidators
   extend ActiveSupport::Autoload
+  autoload :Error
   autoload :MimeTypeAnalyzer
 end
 

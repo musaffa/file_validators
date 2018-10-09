@@ -18,6 +18,8 @@ I18n.enforce_available_locales = false
 Dir[File.join(File.dirname(__FILE__), 'support/**/*.rb')].each { |f| require f }
 
 RSpec.configure do |config|
+  config.include Helpers
+
   # Suppress stdout in the console
   config.before { allow($stdout).to receive(:write) }
 end
