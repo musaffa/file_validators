@@ -15,7 +15,7 @@ module ActiveModel
         return if values.empty?
 
         mode = option_value(record, :mode)
-        tool = option_value(record, :tool) || SUPPORTED_MODES[mode] || :mime_types
+        tool = option_value(record, :tool) || SUPPORTED_MODES[mode]
 
         allowed_types = option_content_types(record, :allow)
         forbidden_types = option_content_types(record, :exclude)
@@ -50,12 +50,12 @@ module ActiveModel
       end
 
       def get_content_type(value, tool)
-        if value.is_a?(Hash)
-          value = OpenStruct.new(value)
-          return value.content_type
+        if tool.present?
+          return FileValidators::MimeTypeAnalyzer.new(tool).call(value)
         end
 
-        FileValidators::MimeTypeAnalyzer.new(tool).call(value)
+        value = OpenStruct.new(value) if value.is_a?(Hash)
+        value.content_type
       end
 
       def option_content_types(record, key)
