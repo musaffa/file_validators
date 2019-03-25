@@ -70,6 +70,9 @@ module ActiveModel
         if value.respond_to?(:byte_size)
           value.byte_size
         else
+        elsif value.respond_to?(:attached?)
+          value.size if value.attached?
+        else
           value.size
         end
       end
