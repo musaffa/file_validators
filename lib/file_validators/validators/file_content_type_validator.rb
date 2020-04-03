@@ -22,6 +22,8 @@ module ActiveModel
           validate_whitelist(record, attribute, content_type, allowed_types)
           validate_blacklist(record, attribute, content_type, forbidden_types)
         end
+      rescue JSON::ParserError
+        record.errors.add attribute, :invalid
       end
 
       def check_validity!

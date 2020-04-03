@@ -20,6 +20,8 @@ module ActiveModel
         options.slice(*CHECKS.keys).each do |option, option_value|
           check_errors(record, attribute, values, option, option_value)
         end
+      rescue JSON::ParserError
+        record.errors.add attribute, :invalid
       end
 
       def check_validity!
