@@ -245,7 +245,7 @@ describe 'File Size Validator integration with ActiveModel' do
       it { is_expected.to be_valid }
     end
 
-    context 'invalid string' do
+    context 'invalid json string' do
       before { subject.avatar = '\'' }
       it { is_expected.not_to be_valid }
     end
