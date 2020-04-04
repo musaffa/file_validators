@@ -240,9 +240,14 @@ describe 'File Size Validator integration with ActiveModel' do
       it { is_expected.to be_valid }
     end
 
-    context 'empty json string' do
+    context 'empty string' do
       before { subject.avatar = '' }
       it { is_expected.to be_valid }
+    end
+
+    context 'invalid json string' do
+      before { subject.avatar = '{filename":"img140910_88338.GIF","content_type":"image/gif","size":33150}' }
+      it { is_expected.not_to be_valid }
     end
   end
 

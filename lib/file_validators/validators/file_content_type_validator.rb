@@ -10,7 +10,13 @@ module ActiveModel
       end
 
       def validate_each(record, attribute, value)
-        values = parse_values(value)
+        begin
+          values = parse_values(value)
+        rescue JSON::ParserError
+          record.errors.add attribute, :invalid
+          return
+        end
+
         return if values.empty?
 
         mode = option_value(record, :mode)
