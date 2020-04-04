@@ -10,7 +10,13 @@ module ActiveModel
       end
 
       def validate_each(record, attribute, value)
-        values = parse_values(value)
+        values = begin
+                   parse_values(value)
+                 rescue JSON::ParserError
+                   record.errors.add attribute, :invalid
+                   []
+                 end
+
         return if values.empty?
 
         mode = option_value(record, :mode)
@@ -22,8 +28,6 @@ module ActiveModel
           validate_whitelist(record, attribute, content_type, allowed_types)
           validate_blacklist(record, attribute, content_type, forbidden_types)
         end
-      rescue JSON::ParserError
-        record.errors.add attribute, :invalid
       end
 
       def check_validity!

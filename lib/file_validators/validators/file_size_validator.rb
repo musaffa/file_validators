@@ -14,14 +14,18 @@ module ActiveModel
       end
 
       def validate_each(record, attribute, value)
-        values = parse_values(value)
+        values = begin
+                   parse_values(value)
+                 rescue JSON::ParserError
+                   record.errors.add attribute, :invalid
+                   []
+                 end
+
         return if values.empty?
 
         options.slice(*CHECKS.keys).each do |option, option_value|
           check_errors(record, attribute, values, option, option_value)
         end
-      rescue JSON::ParserError
-        record.errors.add attribute, :invalid
       end
 
       def check_validity!
