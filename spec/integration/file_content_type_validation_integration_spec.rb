@@ -366,7 +366,7 @@ describe 'File Content Type integration with ActiveModel' do
     end
 
     context 'invalid json string' do
-      before { subject.avatar = '\'' }
+      before { subject.avatar = '{filename":"img140910_88338.jpg","content_type":"image/jpeg","size":13150}' }
       it { is_expected.not_to be_valid }
     end
   end
