@@ -240,7 +240,7 @@ describe 'File Size Validator integration with ActiveModel' do
       it { is_expected.to be_valid }
     end
 
-    context 'empty json string' do
+    context 'empty string' do
       before { subject.avatar = '' }
       it { is_expected.to be_valid }
     end
