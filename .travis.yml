@@ -1,39 +1,93 @@
 language: ruby
 
 rvm:
-  - 2.2.3
-  - 2.5.0
-  - ruby-head
-  - jruby-9.0.4.0
-  - jruby-9.1.7.0
+  - 2.4
+  - 2.5
+  - jruby-9.2
+  - 2.6
+  - 2.7
 
 gemfile:
+  - gemfiles/activemodel_6.0.gemfile
   - gemfiles/activemodel_5.2.gemfile
+  - gemfiles/activemodel_5.1.gemfile
   - gemfiles/activemodel_5.0.gemfile
   - gemfiles/activemodel_4.2.gemfile
-  - gemfiles/activemodel_4.0.gemfile
-  - gemfiles/activemodel_3.2.gemfile
 
 matrix:
   exclude:
-  - rvm: 2.5.0
-    gemfile: gemfiles/activemodel_3.2.gemfile
-  - rvm: 2.5.0
-    gemfile: gemfiles/activemodel_4.0.gemfile
-  - rvm: 2.5.0
-    gemfile: gemfiles/activemodel_4.2.gemfile
-
-  - rvm: ruby-head
-    gemfile: gemfiles/activemodel_3.2.gemfile
-  - rvm: ruby-head
-    gemfile: gemfiles/activemodel_4.0.gemfile
-  - rvm: ruby-head
-    gemfile: gemfiles/activemodel_4.2.gemfile
-
-  - rvm: jruby-9.0.4.0
-    gemfile: gemfiles/activemodel_5.0.gemfile
-  - rvm: jruby-9.0.4.0
-    gemfile: gemfiles/activemodel_5.2.gemfile
+    # ActiveModel 6.0+ only supports Ruby 2.5+
+    - rvm: 2.4
+      gemfile: gemfiles/activemodel_6.0.gemfile
 
   allow_failures:
-  - rvm: ruby-head
+    # ActiveModel 4.2 unknown support for Ruby 2.5+
+    - rvm: 2.5
+      gemfile: gemfiles/activemodel_4.2.gemfile
+    - rvm: jruby-9.2
+      gemfile: gemfiles/activemodel_4.2.gemfile
+    - rvm: 2.6
+      gemfile: gemfiles/activemodel_4.2.gemfile
+    - rvm: 2.7
+      gemfile: gemfiles/activemodel_4.2.gemfile
+
+    # ActiveModel 5.0 unknown support for Ruby 2.5+
+    - rvm: 2.5
+      gemfile: gemfiles/activemodel_5.0.gemfile
+    - rvm: jruby-9.2
+      gemfile: gemfiles/activemodel_5.0.gemfile
+    - rvm: 2.6
+      gemfile: gemfiles/activemodel_5.0.gemfile
+    - rvm: 2.7
+      gemfile: gemfiles/activemodel_5.0.gemfile
+
+    # ActiveModel 5.1 unknown support for Ruby 2.6+
+    - rvm: 2.6
+      gemfile: gemfiles/activemodel_5.1.gemfile
+    - rvm: 2.7
+      gemfile: gemfiles/activemodel_5.1.gemfile
+
+    # ActiveModel 5.2 unknown support for Ruby 2.7+
+    - rvm: 2.7
+      gemfile: gemfiles/activemodel_5.2.gemfile
+
+  include:
+    # Ruby 2.2 support
+    - rvm: 2.2
+      gemfile: gemfiles/activemodel_3.2.gemfile
+    - rvm: 2.2
+      gemfile: gemfiles/activemodel_4.0.gemfile
+    - rvm: 2.2
+      gemfile: gemfiles/activemodel_4.1.gemfile
+    - rvm: 2.2
+      gemfile: gemfiles/activemodel_4.2.gemfile
+    - rvm: 2.2
+      gemfile: gemfiles/activemodel_5.0.gemfile
+    - rvm: 2.2
+      gemfile: gemfiles/activemodel_5.1.gemfile
+    - rvm: 2.2
+      gemfile: gemfiles/activemodel_5.2.gemfile
+
+    # Ruby 2.3 support
+    - rvm: 2.3
+      gemfile: gemfiles/activemodel_4.1.gemfile
+    - rvm: 2.3
+      gemfile: gemfiles/activemodel_4.2.gemfile
+    - rvm: 2.3
+      gemfile: gemfiles/activemodel_5.0.gemfile
+    - rvm: 2.3
+      gemfile: gemfiles/activemodel_5.1.gemfile
+    - rvm: 2.3
+      gemfile: gemfiles/activemodel_5.2.gemfile
+
+    # JRuby 9.1 support
+    - rvm: jruby-9.1
+      gemfile: gemfiles/activemodel_4.1.gemfile
+    - rvm: jruby-9.1
+      gemfile: gemfiles/activemodel_4.2.gemfile
+    - rvm: jruby-9.1
+      gemfile: gemfiles/activemodel_5.0.gemfile
+    - rvm: jruby-9.1
+      gemfile: gemfiles/activemodel_5.1.gemfile
+    - rvm: jruby-9.1
+      gemfile: gemfiles/activemodel_5.2.gemfile
