@@ -16,22 +16,21 @@ gemfile:
 
 matrix:
   exclude:
-    # ActiveModel 6.0+ only supports Ruby 2.5+
+    # ActiveModel 6.0+ only supports Ruby from 2.5
     - rvm: 2.4
       gemfile: gemfiles/activemodel_6.0.gemfile
 
-  allow_failures:
-    # ActiveModel 4.2 unknown support for Ruby 2.7+
+    # ActiveModel 5.1 only supports Ruby up to 2.6
     - rvm: 2.7
-      gemfile: gemfiles/activemodel_4.2.gemfile
+      gemfile: gemfiles/activemodel_5.1.gemfile
 
-    # ActiveModel 5.0 unknown support for Ruby 2.7+
+    # ActiveModel 5.0 only supports Ruby up to 2.6
     - rvm: 2.7
       gemfile: gemfiles/activemodel_5.0.gemfile
 
-    # ActiveModel 5.1 unknown support for Ruby 2.7+
+    # ActiveModel 4.2 only supports Ruby up to 2.6
     - rvm: 2.7
-      gemfile: gemfiles/activemodel_5.1.gemfile
+      gemfile: gemfiles/activemodel_4.2.gemfile
 
   include:
     # Ruby 2.2 support
