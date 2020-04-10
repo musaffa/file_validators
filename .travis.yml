@@ -21,21 +21,15 @@ matrix:
       gemfile: gemfiles/activemodel_6.0.gemfile
 
   allow_failures:
-    # ActiveModel 4.2 unknown support for Ruby 2.6+
-    - rvm: 2.6
-      gemfile: gemfiles/activemodel_4.2.gemfile
+    # ActiveModel 4.2 unknown support for Ruby 2.7+
     - rvm: 2.7
       gemfile: gemfiles/activemodel_4.2.gemfile
 
-    # ActiveModel 5.0 unknown support for Ruby 2.6+
-    - rvm: 2.6
-      gemfile: gemfiles/activemodel_5.0.gemfile
+    # ActiveModel 5.0 unknown support for Ruby 2.7+
     - rvm: 2.7
       gemfile: gemfiles/activemodel_5.0.gemfile
 
-    # ActiveModel 5.1 unknown support for Ruby 2.6+
-    - rvm: 2.6
-      gemfile: gemfiles/activemodel_5.1.gemfile
+    # ActiveModel 5.1 unknown support for Ruby 2.7+
     - rvm: 2.7
       gemfile: gemfiles/activemodel_5.1.gemfile
 
