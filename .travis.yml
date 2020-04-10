@@ -33,10 +33,6 @@ matrix:
     - rvm: 2.7
       gemfile: gemfiles/activemodel_5.1.gemfile
 
-    # ActiveModel 5.2 unknown support for Ruby 2.7+
-    - rvm: 2.7
-      gemfile: gemfiles/activemodel_5.2.gemfile
-
   include:
     # Ruby 2.2 support
     - rvm: 2.2
