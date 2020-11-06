@@ -142,7 +142,7 @@ validates :video, file_content_type: { allow: lambda { |record| record.content_t
 can be a String or a Regexp. It also accepts `proc`. See `:allow` options examples.
 * `mode`: `:strict` or `:relaxed`. `:strict` mode can detect content type based on the contents
 of the files. It also detects media type spoofing (see more in [security](#security)).
-`:file` analyzer is used in `:strict` model. `:relaxed` mode uses file name to detect
+`:file` analyzer is used in `:strict` mode. `:relaxed` mode uses file name to detect
 the content type. `mime_types` analyzer is used in `relaxed` mode. If mode option is not
 set then the validator uses form supplied content type.
 * `tool`: `:file`, `:fastimage`, `:filemagic`, `:mimemagic`, `:marcel`, `:mime_types`, `:mini_mime`.
