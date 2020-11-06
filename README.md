@@ -12,8 +12,8 @@ Any module that uses ActiveModel, for example ActiveRecord, can use these file v
 
 ## Support
 
-* ActiveModel versions: 3.2, 4 and 5.
-* Rails versions: 3.2, 4 and 5.
+* ActiveModel versions: 3.2, 4, 5 and 6.
+* Rails versions: 3.2, 4, 5 and 6.
 
 As of version `2.2`, activemodel 3.0 and 3.1 will no longer be supported.
 For activemodel 3.0 and 3.1, please use file_validators version `<= 2.1`.
