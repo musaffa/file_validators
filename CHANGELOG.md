@@ -1,3 +1,8 @@
+# 3.0.0.beta2
+
+* [#32](https://github.com/musaffa/file_validators/pull/32) Removed terrapin. Added options for choosing MIME type analyzers with `:tool` option.
+* Rubocop style guide
+
 # 3.0.0.beta1
 
 * [#29](https://github.com/musaffa/file_validators/pull/29) Upgrade cocaine to terrapin

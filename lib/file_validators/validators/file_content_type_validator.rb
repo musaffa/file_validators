@@ -57,11 +57,11 @@ module ActiveModel
 
       def get_content_type(value, tool)
         if tool.present?
-          return FileValidators::MimeTypeAnalyzer.new(tool).call(value)
+          FileValidators::MimeTypeAnalyzer.new(tool).call(value)
+        else
+          value = OpenStruct.new(value) if value.is_a?(Hash)
+          value.content_type
         end
-
-        value = OpenStruct.new(value) if value.is_a?(Hash)
-        value.content_type
       end
 
       def option_content_types(record, key)
@@ -111,7 +111,7 @@ module ActiveModel
       #   :relaxed validates the content type based on the file name using
       #   the mime-types gem. It's only for sanity check.
       #   If mode is not set then it uses form supplied content type.
-      # * +tool+: :fastimage, :file, :filemagic, :mimemagic, :marcel, :mime_types, :mini_mime
+      # * +tool+: :file, :fastimage, :filemagic, :mimemagic, :marcel, :mime_types, :mini_mime
       #   You can choose a different built-in MIME type analyzer
       #   By default supplied content type is used to determine the MIME type
       #   This option have precedence over mode option
