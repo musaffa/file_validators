@@ -4,12 +4,9 @@ require 'active_model'
 require 'ostruct'
 
 module FileValidators
-  module Utils
-    extend ActiveSupport::Autoload
-
-    autoload :ContentTypeDetector
-    autoload :MediaTypeSpoofDetector
-  end
+  extend ActiveSupport::Autoload
+  autoload :Error
+  autoload :MimeTypeAnalyzer
 end
 
 Dir[File.dirname(__FILE__) + '/file_validators/validators/*.rb'].each { |file| require file }

@@ -4,6 +4,7 @@ module ActiveModel
   module Validations
     class FileContentTypeValidator < ActiveModel::EachValidator
       CHECKS = %i[allow exclude].freeze
+      SUPPORTED_MODES = { relaxed: :mime_types, strict: :file }.freeze
 
       def self.helper_method_name
         :validates_file_content_type
@@ -20,11 +21,13 @@ module ActiveModel
         return if values.empty?
 
         mode = option_value(record, :mode)
+        tool = option_value(record, :tool) || SUPPORTED_MODES[mode]
+
         allowed_types = option_content_types(record, :allow)
         forbidden_types = option_content_types(record, :exclude)
 
         values.each do |val|
-          content_type = get_content_type(val, mode)
+          content_type = get_content_type(val, tool)
           validate_whitelist(record, attribute, content_type, allowed_types)
           validate_blacklist(record, attribute, content_type, forbidden_types)
         end
@@ -52,35 +55,13 @@ module ActiveModel
         Array.wrap(value).reject(&:blank?)
       end
 
-      def get_file_path(value)
-        if value.try(:path)
-          value.path
-        else
-          raise ArgumentError, 'value must return a file path in order to validate file content type'
+      def get_content_type(value, tool)
+        if tool.present?
+          return FileValidators::MimeTypeAnalyzer.new(tool).call(value)
         end
-      end
 
-      def get_file_name(value)
-        if value.try(:original_filename)
-          value.original_filename
-        else
-          File.basename(get_file_path(value))
-        end
-      end
-
-      def get_content_type(value, mode)
-        case mode
-        when :strict
-          file_path = get_file_path(value)
-          file_name = get_file_name(value)
-          FileValidators::Utils::ContentTypeDetector.new(file_path, file_name).detect
-        when :relaxed
-          file_name = get_file_name(value)
-          MIME::Types.type_for(file_name).first
-        else
-          value = OpenStruct.new(value) if value.is_a?(Hash)
-          value.content_type
-        end
+        value = OpenStruct.new(value) if value.is_a?(Hash)
+        value.content_type
       end
 
       def option_content_types(record, key)
@@ -130,6 +111,10 @@ module ActiveModel
       #   :relaxed validates the content type based on the file name using
       #   the mime-types gem. It's only for sanity check.
       #   If mode is not set then it uses form supplied content type.
+      # * +tool+: :fastimage, :file, :filemagic, :mimemagic, :marcel, :mime_types, :mini_mime
+      #   You can choose a different built-in MIME type analyzer
+      #   By default supplied content type is used to determine the MIME type
+      #   This option have precedence over mode option
       # * +if+: A lambda or name of an instance method. Validation will only
       #   be run is this lambda or method returns true.
       # * +unless+: Same as +if+ but validates if lambda or method returns false.
