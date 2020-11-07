@@ -10,20 +10,10 @@ appraise 'activemodel-4.0' do
   gem 'rack', '1.6.5'
 end
 
-appraise 'activemodel-4.1' do
-  gem 'activemodel', '4.1.6'
-  gem 'rack', '1.6.5'
-end
-
-appraise 'activemodel-4.2' do
-  gem 'activemodel', '4.2.7.1'
-  gem 'rack', '1.6.5'
-end
-
 appraise 'activemodel-5.0' do
   gem 'activemodel', '5.0.1'
 end
 
-appraise 'activemodel-5.2' do
-  gem 'activemodel', '5.2.1'
+appraise 'activemodel-6.0' do
+  gem 'activemodel', '6.0.3'
 end

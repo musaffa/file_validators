@@ -2,7 +2,6 @@
 
 [![Gem Version](https://badge.fury.io/rb/file_validators.svg)](http://badge.fury.io/rb/file_validators)
 [![Build Status](https://travis-ci.org/musaffa/file_validators.svg)](https://travis-ci.org/musaffa/file_validators)
-[![Dependency Status](https://gemnasium.com/musaffa/file_validators.svg)](https://gemnasium.com/musaffa/file_validators)
 [![Coverage Status](https://coveralls.io/repos/musaffa/file_validators/badge.png)](https://coveralls.io/r/musaffa/file_validators)
 [![Code Climate](https://codeclimate.com/github/musaffa/file_validators/badges/gpa.svg)](https://codeclimate.com/github/musaffa/file_validators)
 [![Inline docs](http://inch-ci.org/github/musaffa/file_validators.svg)](http://inch-ci.org/github/musaffa/file_validators)
