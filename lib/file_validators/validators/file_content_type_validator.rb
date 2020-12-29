@@ -87,7 +87,7 @@ module ActiveModel
       def mark_invalid(record, attribute, error, option_types)
         error_options = options.merge(types: option_types.join(', '))
         unless record.errors.added?(attribute, error, error_options)
-          record.errors.add attribute, error, error_options
+          record.errors.add attribute, error, **error_options
         end
       end
     end
