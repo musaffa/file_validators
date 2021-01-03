@@ -1,0 +1,10 @@
+zh-CN:
+  errors:
+    messages:
+      file_size_is_in: 文件大小必须在 %{min} 和 %{max} 之间
+      file_size_is_less_than: 文件必须小于 %{count}'
+      file_size_is_less_than_or_equal_to: 文件不能大于 %{count}
+      file_size_is_greater_than: 文件必须大于 %{count}
+      file_size_is_greater_than_or_equal_to: 文件不能小于 %{count}
+      allowed_file_content_types: 文件必须是以下格式 %{types}
+      excluded_file_content_types: 文件格式不能是 %{types}
