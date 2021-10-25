@@ -75,6 +75,8 @@ module ActiveModel
       def value_byte_size(value)
         if value.respond_to?(:byte_size)
           value.byte_size
+        elsif value.respond_to?(:attached?)
+          value.size if value.attached?
         else
           value.size
         end
